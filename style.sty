@@ -323,6 +323,27 @@
 \RequirePackage{xfrac}
 
 %-----------------------------------------------------------
+%        A macro to detect if arg output is empty
+%-----------------------------------------------------------  
+
+% if #1 is empty, prints #2, otherwise #3
+% also defines \FirstArg as #1 so that #1 can be reused
+% within #2 and #3
+
+\newcommand{\ifargoutempty}[3]{
+\def\argoutemptyFirstArg{#1}
+\begingroup
+\def\item{n}
+\setbox0=\vbox{#1\unskip}\ifdim\wd0=0pt
+\endgroup
+	#2
+\else
+\endgroup
+	#3
+\fi
+}
+
+%-----------------------------------------------------------
 %                       LISTINGS
 %-----------------------------------------------------------
 
@@ -333,7 +354,11 @@
 	
 	\RequirePackage[cache]{minted}
 } {
-	\newcommand{\mintedoutputdir}{{auxfiles}}
+	\ifargoutempty{\auxfiles}{
+		\newcommand{\mintedoutputdir}{auxfiles}
+	}{
+		\newcommand{\mintedoutputdir}{\auxfiles}
+	}
 	\newcommand{\listingspath}{}
 	\RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
 }
@@ -378,7 +403,9 @@
 \@ifundefined{mubytein}{\countdef\mubytein=0}{}
 
 %inlinecode environment: arg1 - language, arg2 - additional code to write into the container (e.g. \caption{}, \label{}, ...)
+\newcounter{inlinecode@filecounter}
 
+\define@boolkey{inlinecode}{noattach}{}
 \define@key{inlinecode}{caption}{\def\inlinecode@caption{#1}}
 \define@key{inlinecode}{label}{\def\inlinecode@label{#1}}
 \define@boolkey{inlinecode}{linenos}{\def\inlinecode@linenos{#1}}
@@ -386,15 +413,9 @@
 \define@key{inlinecode}{fontsize}{\def\inlinecode@fontsize{#1}}
 \define@key{inlinecode}{baselinestretch}{\def\inlinecode@baselinestretch{#1}}
 
-\setkeys{inlinecode}{linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
+\setkeys{inlinecode}{noattach=false,linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
 
-\newenvironment{inlinecode}[2][]{
-  	\begingroup  	
-	\setkeys*{inlinecode}{#1}
-	\let\inlinecode@XKV@rm\XKV@rm
-	\VerbatimEnvironment
-  	\mubytein=0
-  	\renewcommand{\discretionary}[3]{#2}
+\newenvironment{noattach@inlinecode}[2]{
 	\begin{center}
 	\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}
 	\@ifundefined{inlinecode@caption}{}{
@@ -402,13 +423,56 @@
 	}
 	\@ifundefined{inlinecode@label}{}{
 		\label{\inlinecode@label}
-	}	
+	}
 	\def\inlinecode@zz{\begin{minted}[}
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{#2}}
-	{\end{minted}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{#2}%
+}%
+{%
+	\end{minted}
 	\end{center}\vspace{-0.5em}
-	\endgroup
 	\noindent
+}
+
+\newenvironment{inlinecode}[2][]{
+	\begingroup
+	\VerbatimEnvironment
+	\mubytein=0
+  	\renewcommand{\discretionary}[3]{#2}
+	\setkeys*{inlinecode}{#1}
+	\let\inlinecode@XKV@rm\XKV@rm
+	% the \if\else\fi construct seems to break code below,
+	% so we use ifundefined with an auxiliary macro instead
+	\let\inlinecode@noattach@aux\relax
+	\ifKV@inlinecode@noattach\else
+		\def\inlinecode@noattach@aux{}
+	\fi
+	\@ifundefined{inlinecode@noattach@aux}{
+	\begin{noattach@inlinecode}{#1}{#2}%
+	}{
+	\stepcounter{inlinecode@filecounter}
+	\def\inlinecode@filename{\jobname-code-\theinlinecode@filecounter.txt}
+	\begin{VerbatimOut}{\inlinecode@filename}%
+	}%
+}{
+	\@ifundefined{inlinecode@noattach@aux}{
+	\end{noattach@inlinecode}
+	}{
+	\end{VerbatimOut}
+	\def\inlinecode@zz{\inputminted[}
+	\begin{code}
+	\@ifundefined{inlinecode@caption}{}{
+		\caption{\inlinecode@caption}
+	}
+	\viewonly{
+		\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir/\inlinecode@filename}{\opensourcecode}}
+	}
+	\@ifundefined{inlinecode@label}{}{
+		\label{\inlinecode@label}
+	}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{python}{\mintedoutputdir/\inlinecode@filename}
+	\end{code}
+	}%
+	\endgroup
 }
 
 \newcommand{\listingname}{\listingscaption}
@@ -594,29 +658,6 @@
 }
 
 \newcommand{\acknowledgements}[1]{\def\Acknowledgements{#1}}
-
-%-----------------------------------------------------------
-%        A macro to detect if arg output is empty
-%-----------------------------------------------------------  
-
-% if #1 is empty, prints #2, otherwise #3
-% also defines \FirstArg as #1 so that #1 can be reused
-% within #2 and #3
-
-\newcommand{\ifargoutempty}[3]{
-\begingroup
-\def\FirstArg{#1}
-\begingroup
-\def\item{n}
-\setbox0=\vbox{#1\unskip}\ifdim\wd0=0pt
-\endgroup
-	#2
-\else
-\endgroup
-	#3
-\fi
-\endgroup
-}
 
 %-----------------------------------------------------------
 %             Abbreviation and term database
