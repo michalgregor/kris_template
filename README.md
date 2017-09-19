@@ -28,11 +28,11 @@ latexmk -silent -bibtex -outdir=auxfiles -pdf -pdflatex="pdflatex -synctex=1 --s
 
 Slovenská typografia je charakteristická mierne excentrickou požiadavkou, že niektoré predložky
 a spojky sa nesmú sádzať na konci riadka. Ak sa tam vyskytnú, musia sa už zalomiť do nasledujúceho riadka.
-Na realizáciu tejto funkcionality v LaTeX-u je potrebné použiť balíček \texttt{encxvlna}.
+Na realizáciu tejto funkcionality v LaTeX-u je potrebné použiť balíček ``encxvlna``.
 
-Tento balíček vyžaduje aktiváciu systému ``enctex``. V inštalácii TeXLive je možné \texttt{enctex} aktivovať tak,
-že sa vytvorí súbor s názvom \texttt{fmtutil.cnf} – buď v rámci LaTeX adresára na ceste \texttt{texmf-local/web2c}
-alebo v rámci domovského adresára na ceste \texttt{texmf/web2c}.
+Tento balíček vyžaduje aktiváciu systému ``enctex``. V inštalácii TeXLive je možné ``enctex`` aktivovať tak,
+že sa vytvorí súbor s názvom ``fmtutil.cnf`` – buď v rámci LaTeX adresára na ceste ``texmf-local/web2c``
+alebo v rámci domovského adresára na ceste ``texmf/web2c``.
 
 Obsah súboru bude nasledovný:
 ```
