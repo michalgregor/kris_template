@@ -1,0 +1,1289 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{style}[2013/02/22 KRIS Style Package]
+
+\newif\if@document
+\DeclareOption{document}{
+  \@documenttrue
+}
+%
+\newif\if@printversion
+\DeclareOption{printversion}{
+  \@printversiontrue
+}
+
+\newif\if@pagelayout\@pagelayoutfalse
+\DeclareOption{pagelayout}{
+  \@pagelayouttrue
+}
+
+\newif\if@beamer\@beamerfalse
+\DeclareOption{beamer}{
+  \@beamertrue
+}
+
+\newif\if@placement\@placementfalse
+\DeclareOption{placement}{
+  \@placementtrue
+}
+
+\newif\if@nowrapfig\@nowrapfigfalse
+\DeclareOption{nowrapfig}{
+  \@nowrapfigtrue
+}
+
+\newif\if@htlatex\@htlatexfalse
+\DeclareOption{htlatex}{
+  \@htlatextrue
+  \@nowrapfigtrue
+}
+
+\ProcessOptions\relax
+
+%-----------------------------------------------------------
+%				hide stuff from printversion
+%-----------------------------------------------------------
+
+\if@printversion
+	\newcommand{\viewonly}[1]{}
+\else
+	\newcommand{\viewonly}[1]{#1}
+\fi
+
+%-----------------------------------------------------------
+%                 Some stuff for documents
+%-----------------------------------------------------------
+
+\if@document
+
+\RequirePackage[unicode]{hyperref}
+%\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, filecolor=blue, urlcolor=blue}
+
+\RequirePackage[usenames,dvipsnames,table]{xcolor}
+\RequirePackage[]{graphicx}
+
+\fi
+
+% Graphics, and their extensions.
+\DeclareGraphicsExtensions{.pdf,.eps,.png,.jpeg,.jpg}
+
+%-----------------------------------------------------------
+%                  Localization macro
+%-----------------------------------------------------------
+
+\newcommand{\addtolang}[2]{\AfterBabelLanguage{#1}{\ifcsname extras#1\endcsname \expandafter\addto\csname extras#1\endcsname{#2}\fi}}
+
+\newcommand{\addword}[3]{\AfterBabelLanguage{#1}{\ifcsname extras#1\endcsname \expandafter\addto\csname extras#1\endcsname{\renewcommand{#2}{#3}}\fi}}
+
+% DO NOT USE ANY LINEBREAKS!!!
+% Usage: \addtolang{language}{translations}.
+% Usage: \addword{language}{originalmacro}{translation}.
+
+%-----------------------------------------------------------
+%                     Encoding
+%-----------------------------------------------------------
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+
+%-----------------------------------------------------------
+%                     Generic stuff
+%-----------------------------------------------------------
+
+%include babel in base mode to enable localization
+\RequirePackage[base]{babel}
+
+%some common localizations
+\addtolang{slovak}{\renewcommand{\tablename}{Tab.}}
+
+%fix behaviour of \cline in tabular when using slovak babel
+\usepackage{etoolbox}
+\preto\tabular{\shorthandoff{-}}
+
+% to do stuff after a page ends
+\usepackage{afterpage}
+
+% verbatim and its font size
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\fvset{fontsize=\small}
+
+% blindtext generation
+\usepackage{blindtext}
+
+% figures and tables in landscape orientation
+\usepackage{rotating}
+
+% embed pdfs as whole pages
+\usepackage{pdfpages}
+
+% Allow arbitrary font sizes. Suppresses warnings.
+\usepackage{lmodern}
+
+%to do notes
+\RequirePackage{todonotes}
+
+%file attachments
+\RequirePackage{attachfile}
+
+% change default attachment icon
+\DeclareRobustCommand{\atfi@acroRotclip}{%
+\raisebox{-1.25bp}{\rotatebox{90}{\parbox[b][21bp]{12bp}{%
+\rule{0pt}{0pt}\pdfliteral{\atfi@acroPaperclip@data}}}%
+}}
+
+\def\atfi@icon@icon{Rotclip}
+\setkeys{AtFi}{color=0.9 0.65 0.25}
+
+%other includes
+\RequirePackage{keycommand}
+\RequirePackage{newfloat}
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+
+%hyperlinks
+\RequirePackage{url}
+\urlstyle{same}
+
+% multiple columns
+\RequirePackage{multicol}
+% reduce vertical spacing before and after multicol
+\setlength{\multicolsep}{6.0pt plus 2.0pt minus 1.5pt}
+
+%tables
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{diagbox}
+\colorlet{TableHeader}{blue!10}
+
+% Multi page tables.
+\usepackage{longtable}
+
+%tables - fixed-width column types
+\RequirePackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcolumntype{K}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{X}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{E}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+
+% wrapfig
+\RequirePackage{wrapfig}
+
+%-----------------------------------------------------------
+%                   Bibliography stuff
+%-----------------------------------------------------------
+% Sort and compress multiple numbers in \cite when using bibtex.
+%\usepackage[square,comma,sort&compress,numbers]{natbib}
+
+\usepackage[backend=biber,style=iso-numeric]{biblatex}
+
+\appto{\bibsetup}{\sloppy}
+
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+
+%\AtBeginBibliography{
+%	\fontencoding{T1}
+%	\fontseries{m}
+%	\fontsize{12}{15}
+%	\selectfont
+%}
+
+%-----------------------------------------------------------
+%                       Counters
+%-----------------------------------------------------------
+
+% Page count, figure count, ...
+\usepackage{totpages}
+\usepackage[figure,table,page]{totalcount}
+
+% bibliography items count
+\usepackage{totcount}
+\newtotcounter{citenum}
+\def\oldbibitem{} \let\oldbibitem=\bibitem
+\def\bibitem{\stepcounter{citenum}\oldbibitem}
+
+% if we are using biblatex
+\@ifundefined{AtBeginBibliography}{}{
+	\AtBeginBibliography{
+		\apptocmd{\finentry}{\stepcounter{citenum}}{}{}
+	}
+}
+
+% appendix count
+\usepackage{assoccnt}
+
+\newcounter{truechapters}
+\regtotcounter{truechapters}
+
+\newcounter{totalchapters}
+\newcounter{appendixchapters}
+\DeclareAssociatedCounters{chapter}{totalchapters,appendixchapters}
+\regtotcounter{totalchapters}
+\regtotcounter{appendixchapters}
+
+\preto\appendix{%
+  % save the number of true chapters
+  \setcounter{truechapters}{\value{chapter}}%
+  % reset the number of chapters
+  \setcounter{appendixchapters}{0}%
+}
+
+% a patch for longtable when using totalcount
+\newif\ifLT@nocaption
+\preto\longtable{\LT@nocaptiontrue}
+\appto\endlongtable{%
+  \ifLT@nocaption
+    \addtocounter{table}{\m@ne}%
+  \fi}
+\preto\LT@caption{%
+  \noalign{\global\LT@nocaptionfalse}}
+
+%-----------------------------------------------------------
+%                     Setting algorithms
+%-----------------------------------------------------------
+
+\usepackage[ruled,linesnumbered]{algorithm2e}
+% Example:
+%\begin{algorithm}[H]
+% \KwData{this text}
+% \KwResult{how to write algorithm with \LaTeX2e }
+% initialization\;
+% \While{not at end of this document}{
+%  read current\;
+%  \eIf{understand}{
+%   go to next section\;
+%   current section becomes this one\;
+%   }{
+%   go back to the beginning of current section\;
+%  }
+% }
+% \caption{How to write algorithms}
+%\end{algorithm}
+
+% NamedBlock
+\def\@NamedBlock@begin{}
+\def\@NamedBlock@end{}
+\SetKwBlock{@NamedBlock}{\@NamedBlock@begin}{\@NamedBlock@end}
+\newcommand{\NamedBlock}[3]{
+	\def\@NamedBlock@begin{#1}
+	\def\@NamedBlock@end{#2}
+	\@NamedBlock{#3}
+}
+
+% Do while block.
+\SetKwRepeat{Do}{do}{while}%
+
+% Set comments in gray color.
+\newcommand\algcommentstyle[1]{\small\textcolor{gray}{#1}}
+\SetCommentSty{algcommentstyle}
+
+% algorithmname
+\if@document
+	\newcommand{\algorithmname}{\algorithmcfname}
+\fi
+
+\addtolang{slovak}{\renewcommand{\listalgorithmcfname}{Zoznam algoritmov}\renewcommand{\algorithmcfname}{Alg.}}
+
+%-----------------------------------------------------------
+%               Fonts, paragraphs.
+%-----------------------------------------------------------
+
+% fonts
+\usepackage{newtxtext,newtxmath} % must come before minted
+\renewcommand*\ttdefault{lmvtt}
+
+% 1.5 line spacing; this has to go before the geometry package!
+\usepackage[doublespacing,nodisplayskipstretch]{setspace}
+
+% paragraph spacing
+\setlength{\parskip}{0.1cm}
+
+% equation spacing
+
+\appto\normalsize{%
+  \setlength\abovedisplayskip{0.75em}
+  \setlength\belowdisplayskip{0.25em}
+  \setlength\abovedisplayshortskip{0.75em}
+  \setlength\belowdisplayshortskip{0.25em}
+}
+
+%-----------------------------------------------------------
+%                	Math packages
+%-----------------------------------------------------------
+
+%mathematics
+\RequirePackage{amsmath}
+\RequirePackage{amssymb,amsfonts,textcomp,bm}
+\RequirePackage{siunitx}
+
+% diagonal fractions: \sfrac
+\RequirePackage{xfrac}
+
+%-----------------------------------------------------------
+%                       LISTINGS
+%-----------------------------------------------------------
+
+\@ifundefined{auxfiles}
+{
+	\newcommand{\mintedoutputdir}{{}}
+	\newcommand{\listingspath}{}
+	
+	\RequirePackage[cache]{minted}
+} {
+	\newcommand{\mintedoutputdir}{{auxfiles}}
+	\newcommand{\listingspath}{}
+	\RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
+}
+
+% The line numbers are on by default.
+\def\codenumbersdefault{true}
+
+\newcommand{\opensourcecode}{[open source code]}
+\newcommand{\opensourcecodestyle}[1]{\raggedleft\vspace{-0.5em}\scriptsize#1\vspace{-0.5em}}
+
+%\inputcode: arg1 - language, arg2 - file
+\define@boolkey{inputcode}{noattach}{}
+\define@boolkey{inputcode}{linenos}{\def\inputcode@linenos{#1}}
+\define@boolkey{inputcode}{obeytabs}{\def\inputcode@obeytabs{#1}}
+\define@key{inputcode}{fontsize}{\def\inputcode@fontsize{#1}}
+\define@key{inputcode}{baselinestretch}{\def\inputcode@baselinestretch{#1}}
+
+\setkeys{inputcode}{linenos=true,noattach=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
+
+\newcommand{\inputcode}[3][]{
+\begingroup
+\setkeys*{inputcode}{#1}
+	\viewonly{
+		\ifKV@inputcode@noattach
+		\else
+			\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}
+		\fi
+	}
+	\def\inputcode@zz{\inputminted[}
+	\expandafter\inputcode@zz\XKV@rm,fontsize=\inputcode@fontsize,baselinestretch=\inputcode@baselinestretch,obeytabs=\inputcode@obeytabs,linenos=\inputcode@linenos]{#2}{\listingspath#3}
+\endgroup
+}
+
+% code environment
+\newenvironment{code}{%
+\renewcommand{\discretionary}[3]{##1}%
+\begin{center}\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}\pagebreak[3]}%
+{\end{center}\vspace{-1em}}%
+
+% if encxvlna is used, we need to turn it off for inlinecode
+% using \mubytein=0; if enctex is not enabled, we define mubytein as a counter to avoid errors
+\@ifundefined{mubytein}{\countdef\mubytein=0}{}
+
+%inlinecode environment: arg1 - language, arg2 - additional code to write into the container (e.g. \caption{}, \label{}, ...)
+
+\define@key{inlinecode}{caption}{\def\inlinecode@caption{#1}}
+\define@key{inlinecode}{label}{\def\inlinecode@label{#1}}
+\define@boolkey{inlinecode}{linenos}{\def\inlinecode@linenos{#1}}
+\define@boolkey{inlinecode}{obeytabs}{\def\inlinecode@obeytabs{#1}}
+\define@key{inlinecode}{fontsize}{\def\inlinecode@fontsize{#1}}
+\define@key{inlinecode}{baselinestretch}{\def\inlinecode@baselinestretch{#1}}
+
+\setkeys{inlinecode}{linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
+
+\newenvironment{inlinecode}[2][]{
+  	\begingroup  	
+	\setkeys*{inlinecode}{#1}
+	\let\inlinecode@XKV@rm\XKV@rm
+	\VerbatimEnvironment
+  	\mubytein=0
+  	\renewcommand{\discretionary}[3]{#2}
+	\begin{center}
+	\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}
+	\@ifundefined{inlinecode@caption}{}{
+		\caption{\inlinecode@caption}
+	}
+	\@ifundefined{inlinecode@label}{}{
+		\label{\inlinecode@label}
+	}	
+	\def\inlinecode@zz{\begin{minted}[}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{#2}}
+	{\end{minted}
+	\end{center}\vspace{-0.5em}
+	\endgroup
+	\noindent
+}
+
+\newcommand{\listingname}{\listingscaption}
+  
+% localization
+\addtolang{slovak}{\renewcommand{\opensourcecode}{[otvoriť zdrojový kód]}\renewcommand{\listingscaption}{Lst.}}
+
+%-----------------------------------------------------------
+%							VIDEOS
+%-----------------------------------------------------------
+
+\RequirePackage{movie15}
+\RequirePackage{marvosym}
+
+\newcommand{\MoviePlay}[1]{\movieref[default]{#1}{{\Large\Forward}}}
+\newcommand{\MovieStop}[1]{\movieref[stop]{#1}{{\Large\SquareSteel}}}
+\newcommand{\MovieControls}[1]{\MoviePlay{#1} \MovieStop{#1}}
+  
+%-----------------------------------------------------------
+% 							LOGS
+%-----------------------------------------------------------
+ 
+\newcommand{\logname}{Log}
+\newcommand{\loglistname}{List of Logs}
+
+% localization
+\addtolang{slovak}{\renewcommand{\logname}{Log}\renewcommand{\loglistname}{Zoznam logov}}
+ 
+\DeclareFloatingEnvironment[name=\logname,listname=\loglistname,within=none]{logfl}
+\newcommand{\listoflogs}{\listoflogfl}
+
+ \newkeyenvironment{loglist}[caption, label][][0]
+ {\VerbatimEnvironment
+ \begin{center}\small
+ \captionsetup{type=logfl,singlelinecheck=off,justification=raggedright,position=top}
+ \ifcommandkey{caption}{\caption{\commandkey{caption}}}{\vspace{-1em}}
+  \ifcommandkey{label}{\label{\commandkey{label}}}{}
+ \begin{Verbatim}}
+ {\end{Verbatim}
+ \end{center}
+ }
+
+%-----------------------------------------------------------
+%		A macro to produce unnumbered parts
+%		that appear in TOC
+%-----------------------------------------------------------
+
+\newcommand{\unpart}[2][]{
+	\clearpage
+	\phantomsection
+	\ifthenelse{\equal{#1}{}}{
+		\addcontentsline{toc}{part}{#2}
+		\part*{#2}
+	}{
+		\addcontentsline{toc}{part}{#1}
+		\part*{#2}	
+	}
+}
+
+%-----------------------------------------------------------
+%		A macro to produce unnumbered chapters
+%		that appear in TOC and marks
+%-----------------------------------------------------------
+
+\newcommand{\unchapter}[2][]{
+	\clearpage
+	\phantomsection
+	\ifthenelse{\equal{#1}{}}{
+		\chapter*{#2}
+		\markboth{\MakeUppercase{#2}}{}
+		\addcontentsline{toc}{chapter}{#2}
+	}{
+		\chapter*{#2}
+		\markboth{\MakeUppercase{#1}}{}
+		\addcontentsline{toc}{chapter}{#1}
+	}
+}
+
+% Only produce the mark without producing the actual heading.
+\newcommand{\unchaptermark}[1]{
+	\clearpage
+	\phantomsection
+	\markboth{\MakeUppercase{#1}}{}
+	\addcontentsline{toc}{chapter}{#1}
+}
+
+\newcommand{\unsection}[2][]{
+	\clearpage
+	\phantomsection
+	\ifthenelse{\equal{#1}{}}{
+		\section*{#2}
+		\markboth{\MakeUppercase{#2}}{}
+		\addcontentsline{toc}{section}{#2}
+	}{
+		\section*{#2}
+		\markboth{\MakeUppercase{#1}}{}
+		\addcontentsline{toc}{section}{#1}
+	}
+}
+
+% Only produce the mark without producing the actual heading.
+\newcommand{\unsectionmark}[1]{
+	\clearpage
+	\phantomsection
+	\markboth{\MakeUppercase{#1}}{}
+	\addcontentsline{toc}{section}{#1}
+}
+
+%-----------------------------------------------------------
+%					Explicit part end
+%-----------------------------------------------------------
+
+\usepackage{bookmark}
+
+\newcommand{\partend}{
+	\addtocontents{toc}{\bigskip}% perhaps as well
+	\bookmarksetup{startatroot}% this is it
+}
+
+%-----------------------------------------------------------
+%                 More document-specific stuff
+%-----------------------------------------------------------
+\if@document
+
+%-----------------------------------------------------------
+%                 Inline enumeration lists
+%-----------------------------------------------------------
+
+\RequirePackage[inline]{enumitem}
+\newlist{inlinelist}{enumerate*}{1}
+\setlist*[inlinelist,1]{label=\itshape(\alph*)}
+
+\setitemize{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
+\setenumerate{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
+
+% alignment in itemize and enumerate
+\newcommand{\listalign}{\makebox[11em][l]}
+
+%-----------------------------------------------------------
+%          A special title, author, date macro
+%-----------------------------------------------------------
+
+\let\tmptitle\title
+\renewcommand{\title}[1]{\tmptitle{#1}\def\Title{#1}}
+
+\let\tmpauthor\author
+\renewcommand{\author}[1]{\tmpauthor{#1}\def\Author{#1}}
+
+\let\tmpdate\date
+\renewcommand{\date}[1]{\tmpdate{#1}\def\Date{#1}}
+
+\newcommand{\academicyear}[1]{\def\AcademicYear{#1}}
+
+\newcommand{\doctype}[1]{\def\Doctype{#1}}
+\newcommand{\docid}[1]{\def\DocID{#1}}
+\newcommand{\supervisor}[1]{\def\Supervisor{#1}}
+\newcommand{\consultant}[1]{\def\Consultant{#1}}
+\newcommand{\reviewer}[1]{\def\Reviewer{#1}}
+
+\newcommand{\keywords}[1]{\def\Keywords{#1}}
+\newcommand{\keywordsName}[1]{\def\KeywordsName{#1}}
+\newcommand{\keywordsSecLang}[1]{\def\KeywordsSecLang{#1}}
+\newcommand{\keywordsNameSecLang}[1]{\def\KeywordsNameSecLang{#1}}
+
+\newcommand{\abstract}[2]{
+\def\AbstractName{#1}
+\def\Abstract{#2}
+}
+
+\newcommand{\abstractSecLang}[2]{
+\def\AbstractNameSecLang{#1}
+\def\AbstractSecLang{#2}
+}
+
+\newcommand{\annotation}[2]{
+\def\AnnotationName{#1}
+\def\Annotation{#2}
+}
+
+\newcommand{\annotationSecLang}[2]{
+\def\AnnotationNameSecLang{#1}
+\def\AnnotationSecLang{#2}
+}
+
+\newcommand{\acknowledgements}[1]{\def\Acknowledgements{#1}}
+
+%-----------------------------------------------------------
+%        A macro to detect if arg output is empty
+%-----------------------------------------------------------  
+
+% if #1 is empty, prints #2, otherwise #3
+% also defines \FirstArg as #1 so that #1 can be reused
+% within #2 and #3
+
+\newcommand{\ifargoutempty}[3]{
+\begingroup
+\def\FirstArg{#1}
+\begingroup
+\def\item{n}
+\setbox0=\vbox{#1\unskip}\ifdim\wd0=0pt
+\endgroup
+	#2
+\else
+\endgroup
+	#3
+\fi
+\endgroup
+}
+
+%-----------------------------------------------------------
+%             Abbreviation and term database
+%-----------------------------------------------------------  
+   
+%acronyms
+\RequirePackage{acro}
+%% probably a good idea for the nomenclature entries:
+\acsetup{hyperref=true}
+\acsetup{first-style=short}
+
+\newlist{acronyms}{description}{1}
+\newcommand*\addcolon[1]{#1:}
+\setlist[acronyms]{
+  	labelwidth=3em,
+  	leftmargin=3.5em,
+  	itemindent=0pt,
+  	font=\addcolon
+}
+
+% localization for # of pages symbol in the list of acronyms
+\DeclareTranslation{slovak}{acronym-page-name}{s.}
+\DeclareTranslation{slovak}{acronym-pages-name}{s.}
+
+\fi %if@document
+
+%-----------------------------------------------------------
+%                    Highlight boxes
+%-----------------------------------------------------------
+
+% highlight macro \hl
+\usepackage{soulutf8}
+
+%For use in equations:
+%	\begin{empheq}[innerbox=\Highlight]{align*}
+%		content...
+%	\end{empheq}
+\RequirePackage{empheq}
+
+%-----------------------------------------------------------
+%                         Csquotes
+%-----------------------------------------------------------
+
+\RequirePackage[autostyle=true,maxlevel=5]{csquotes}
+
+%UGLY HACK FOR USING csquotes with libertine
+\def\alloc@#1#2#3#4#5%
+ {\ifnum\count1#1<#4% make sure there's still room
+    \allocationnumber\count1#1
+    \global\advance\count1#1\@ne
+    \global#3#5\allocationnumber
+    \wlog{\string#5=\string#2\the\allocationnumber}%
+  \else\ifnum#1<6
+    \def\etex@dummy@definition{}% <-- code added
+    \begingroup \escapechar\m@ne
+    \expandafter\alloc@@\expandafter{\string#2}#5%
+  \else\errmessage{No room for a new #2}\fi\fi
+ }
+
+\DeclareQuoteStyle[]{slovak}
+{\quotedblbase}{\textquotedblleft}
+{\quotesinglbase}{\textquoteleft}
+
+%----------------------------------------------------------
+%	An alternative to \caption that applies \centering
+%   even with manual \\.
+%----------------------------------------------------------
+
+\usepackage{varwidth,calc}
+
+\newcommand{\breakcaption}{\@dblarg\emit@breakcaption}
+\long\def\emit@breakcaption[#1]#2{%
+  \expandafter\caption\expandafter[\expandafter\emit@removeafter#1\\\@nil]{%
+    \begin{varwidth}[t]{\textwidth-\widthof{\figurename\space\thefigure:\space}}
+    #2
+    \end{varwidth}%
+  }%
+}
+\def\emit@removeafter#1\\#2\@nil{#1}
+
+%----------------------------------------------------------
+%						angl. mark
+%----------------------------------------------------------
+
+\def\angl{\@ifstar\@@angl\@angl}
+
+% obali argument do \foreignlanguage{english}; prida skratku angl.
+\newcommand{\@angl}[1]{angl. \foreignlanguage{english}{#1}}
+
+% obali argument do \foreignlanguage{english}; bez skratky angl.
+\newcommand{\@@angl}[1]{\foreignlanguage{english}{#1}}
+
+%-----------------------------------------------------------
+%                        Page layout
+%-----------------------------------------------------------
+
+\if@pagelayout
+
+\usepackage{geometry}
+\RequirePackage{fancyhdr}
+
+% applies the default geometry, followed by any
+% specified changes 
+\newcommand{\changegeometry}[1]{
+	\begingroup
+	\protected@edef\x{%
+	  \endgroup
+	  \noexpand\newgeometry{\defaultmargins,#1}
+	}
+	\x
+}
+
+% defines a geometry using \changegeometry{#2} and saves it
+% under name #1
+\newcommand{\defgeometry}[2]{
+	\savegeometry{origgeometry}
+	\changegeometry{#2}
+	\savegeometry{#1}
+	\loadgeometry{origgeometry}
+}
+
+% we redefine thispagestyle so that it also applies
+% a geometry with the same name, if available
+\let\origthispagestyle=\thispagestyle
+\renewcommand{\thispagestyle}[1]{
+	\savegeometry{origgeometry}
+	\afterpage{\egroup\loadgeometry{origgeometry}\bgroup}
+	
+	\@ifundefined{Gm@restore@@#1}{
+		\loadgeometry{default}
+	}{
+		\loadgeometry{#1}
+	}
+	
+	\fancyhfoffset[O]{0pt} %recalculate fancy header stuff after newgeometry
+	\origthispagestyle{#1}
+}
+
+% the same modification for pagestyle
+\let\origpagestyle=\pagestyle
+\renewcommand{\pagestyle}[1]{
+	\@ifundefined{Gm@restore@@#1}{
+		\loadgeometry{default}
+	}{
+		\loadgeometry{#1}
+	}
+	\fancyhfoffset[O]{0pt} %recalculate fancy header stuff after newgeometry
+	\origpagestyle{#1}
+}
+
+% we define the default page format
+\newcommand{\defaultmargins}{top=1.25cm,bottom=1.5cm,left=3cm,right=2.5cm,head=1cm,headsep=0.75cm,foot=1cm,includehead,includefoot}
+
+% empty pages should have no header and footer
+\defgeometry{empty}{}
+
+\defgeometry{default}{}
+\fancypagestyle{default}{
+  \pagenumbering{arabic}
+  \fancyhf{}% remove everything
+  \rfoot{\thepage}
+  \rhead{\leftmark}
+  \renewcommand{\headrulewidth}{1pt} % remove lines as well
+  \renewcommand{\footrulewidth}{0pt}
+  
+  \fancypagestyle{plain}{
+    \fancyhf{}% remove everything
+    \rfoot{\thepage}
+%    \rhead{\leftmark}
+    \renewcommand{\headrulewidth}{0pt} % remove lines as well
+    \renewcommand{\footrulewidth}{0pt}
+  }
+}
+
+% we apply the defaults here
+\pagestyle{default}
+
+\defgeometry{frontpage}{}
+\fancypagestyle{frontpage}{
+  \pagenumbering{gobble}
+  \fancyhead{} % remove everything
+  \fancyfoot{} % remove everything
+  \renewcommand{\headrulewidth}{0pt} % remove lines as well
+  \renewcommand{\footrulewidth}{0pt}
+%  \rhead{\begin{flushright}\thepage\end{flushright}}
+  
+  \fancypagestyle{plain} {
+	\fancyhead{} % remove everything
+	\fancyfoot{} % remove everything
+	\renewcommand{\headrulewidth}{0pt} % remove lines as well
+	\renewcommand{\footrulewidth}{0pt}
+%	\rhead{\begin{flushright}\thepage\end{flushright}}
+  }
+}
+
+\defgeometry{frontmatter}{}
+\fancypagestyle{frontmatter}{
+  \pagenumbering{roman}
+  \fancyhead{} % remove everything
+  \fancyfoot{} % remove everything
+  \renewcommand{\headrulewidth}{0pt} % remove lines as well
+  \renewcommand{\footrulewidth}{0pt}
+  \rhead{\begin{flushright}\thepage\end{flushright}}
+  
+  \fancypagestyle{plain} {
+	\fancyhead{} % remove everything
+	\fancyfoot{} % remove everything
+	\renewcommand{\headrulewidth}{0pt} % remove lines as well
+	\renewcommand{\footrulewidth}{0pt}
+	\rhead{\begin{flushright}\thepage\end{flushright}}
+  }
+}
+
+% Backmatter pagestyle.
+\defgeometry{backmatter}{}
+\fancypagestyle{backmatter}{
+  \pagenumbering{Roman}
+  \fancyhead{} % remove everything
+  \fancyfoot{} % remove everything
+  \rhead{\thepage}
+  \renewcommand{\headrulewidth}{0pt} % remove lines as well
+  \renewcommand{\footrulewidth}{0pt}
+  
+  \fancypagestyle{plain} {
+	\fancyhead{} % remove everything
+	\fancyfoot{} % remove everything
+	\rhead{\thepage}
+	\renewcommand{\headrulewidth}{0pt} % remove lines as well
+	\renewcommand{\footrulewidth}{0pt}
+  }
+}
+
+% Appendix pagestyle.
+\defgeometry{appendix}{}
+\fancypagestyle{appendix}{
+  \pagenumbering{Roman}
+  \fancyhead{} % remove everything
+  \fancyfoot{} % remove everything
+  \rhead{\textsc{Prílohová čast}}
+  \rfoot{\thepage}
+  \renewcommand{\headrulewidth}{1pt} % remove lines as well
+  \renewcommand{\footrulewidth}{0pt}
+  
+  \fancypagestyle{plain} {
+	\fancyhead{} % remove everything
+	\fancyfoot{} % remove everything
+	\rfoot{\thepage}
+	\renewcommand{\headrulewidth}{0pt} % remove lines as well
+	\renewcommand{\footrulewidth}{0pt}
+  }
+}
+
+\fi
+
+%-----------------------------------------------------------
+% Redefine frontmatter, mainmatter and backmatter to use
+% the appropriate page styles.
+%-----------------------------------------------------------
+
+\renewcommand\frontmatter{%
+    \cleardoublepage
+    \@mainmatterfalse
+    \pagestyle{frontmatter}
+}
+
+\renewcommand\mainmatter{%
+    \cleardoublepage
+    \@mainmattertrue
+    \pagestyle{default}
+}
+
+\renewcommand\backmatter{%
+    \if@openright
+      \cleardoublepage
+    \else
+      \clearpage
+    \fi
+    \@mainmatterfalse
+    \pagestyle{backmatter}
+}
+
+\appto{\appendix}{
+	\pagestyle{appendix}
+}
+
+\addtolang{slovak}{\renewcommand{\appendixname}{Príloha}}
+
+%-----------------------------------------------------------
+%    An environment for setting aligned text; based on
+%	 tabular, but with corrected vertical spacing.
+%-----------------------------------------------------------
+
+\newenvironment{alignedtext}[1]{
+\begingroup
+\newcounter{rowno}
+\setcounter{rowno}{0}
+\begin{minipage}[b][\therowno\baselineskip-\parskip]{\textwidth}\begin{tabular}[b]{@{\stepcounter{rowno}}#1}
+}{\end{tabular}
+\end{minipage}\endgroup}
+
+%-----------------------------------------------------------
+%                Numbering, ordering
+%-----------------------------------------------------------
+
+% if chapters exist, number by chapters, otherwise by sections
+\def\numberby{chapter}
+
+%2-level equation numbering
+\numberwithin{equation}{chapter}
+%2-level figure numbering
+\numberwithin{figure}{chapter}
+%2-level table numbering
+\numberwithin{table}{chapter}
+
+% keep floats in their sections
+%\RequirePackage[section]{placeins}
+
+%-----------------------------------------------------------
+%              		Settings.
+%-----------------------------------------------------------
+
+% Path to graphics.
+\graphicspath{{images/}}
+
+% Decimal mark.
+\usepackage{siunitx}
+\sisetup{output-decimal-marker = {,}}
+
+%-----------------------------------------------------------
+%              		Chapter headings
+%-----------------------------------------------------------
+
+\usepackage{titlesec}
+
+% part
+\titleformat{\part}[display]
+{\thispagestyle{empty}\centering\normalfont\Huge\bfseries\scshape}
+{\textsc{\partname} \thepart}
+{0pt}
+{}
+
+% chapter
+\titleformat{\chapter}[hang]
+{\huge\bfseries\scshape}
+{\thechapter\;|\;}
+{0pt}
+{}
+
+\appto{\appendix}{
+	\titleformat{\chapter}[hang]
+	{\huge\bfseries\scshape}
+	{\appendixname~\thechapter\;|\;}
+	{0pt}
+	{}
+}
+
+\titlespacing*{\chapter}{0pt}{0.5cm}{1.5cm}
+
+\renewcommand{\chaptermark}[1]{
+	\markboth{\textsc{\ifnum \c@secnumdepth >\m@ne 
+%	\@chapapp \
+	\thechapter . \fi #1}}{}
+}
+
+% section
+\titleformat{\section}[hang]
+{\Large\bfseries}
+{\thesection\;}
+{0pt}
+{}
+
+\titlespacing*{\section}{0pt}{0.5em}{0.25em}
+
+% subsection
+\titleformat{\subsection}[hang]
+{\large\bfseries}
+{\thesubsection\;}
+{0pt}
+{}
+
+\titlespacing*{\subsection}{0pt}{0.5em}{0.25em}
+
+% subsubsection
+\titlespacing*{\subsubsection}{0pt}{0.5em}{0.25em}
+
+%paragraph
+\titlespacing*{\paragraph}{0pt}{0.5em}{1em}
+
+%-----------------------------------------------------------
+%               Title page and cover macros
+%-----------------------------------------------------------
+
+\if@document
+
+% makecover
+\newcommand{\makecover}{
+\clearpage
+\thispagestyle{frontpage}
+
+\begingroup
+	\setlength{\parindent}{0pt}
+	\begingroup
+		\centering
+		
+		\Large Žilinská univerzita v Žiline
+		
+		\large Elektrotechnická fakulta
+	
+	\endgroup
+	
+	\vspace{2.55cm}
+	
+	\begingroup
+		\large \DocID
+	\endgroup
+	
+	\vfill
+	
+	\begingroup
+		\centering
+		
+		\Large \MakeUppercase{\Title}
+		
+		\normalsize \MakeUppercase{\Doctype}
+	
+	\endgroup
+	
+	\vfill
+	
+	\begingroup
+		\large 2017
+		
+		\Author
+	\endgroup
+
+\endgroup
+\clearpage
+}
+
+% maketitle
+\renewcommand{\maketitle}{
+\clearpage
+\thispagestyle{frontpage}
+
+\begingroup
+	\setlength{\parindent}{0pt}
+	\begingroup
+		\centering
+		
+		\Large Žilinská univerzita v Žiline
+		
+		\large Elektrotechnická fakulta
+		
+		\large Katedra riadiacich a informačných systémov
+	
+	\endgroup
+			
+	\vfill
+	
+	\begingroup
+		\centering
+		
+		\Large \MakeUppercase{\Title}
+		
+		\normalsize \MakeUppercase{\Doctype}
+	
+	\endgroup
+	
+	\vfill
+	
+	\begingroup
+		\normalsize				
+		Študijný program: Riadenie procesov \\
+		Študijný odbor: 5.2.14 Automatizácia \\
+		\begin{alignedtext}{@{}l@{ }l}
+		Školiace pracovisko:& Žilinská univerzita v Žiline, Elektrotechnická fakulta,\\
+		& Katedra riadiacich a informačných systémov
+		\end{alignedtext} \\
+		Vedúci diplomovej práce: \Supervisor \\
+		\@ifundefined{Consultant}{}{
+		Konzultant: \Consultant \\
+		}
+	\endgroup
+		
+	\vspace{2cm}
+	
+	\begingroup
+		\normalsize Žilina, 2017
+		
+		\Author
+	\endgroup
+	
+\endgroup
+\clearpage
+}
+
+% makeabstract
+\newcommand{\makeabstract}{
+\clearpage
+
+\vspace*{\fill}
+\vspace{-5em}
+
+\section*{\AbstractName}
+\Abstract
+
+\noindent \textbf{\KeywordsName:} \Keywords
+
+\vspace*{\fill}
+
+\section*{\AbstractNameSecLang}
+\AbstractSecLang
+
+\noindent \textbf{\KeywordsNameSecLang:} \KeywordsSecLang
+
+\vspace*{\fill}
+
+\clearpage
+}
+
+% makeannotation
+\newlength{\annotationSpacing}
+\setlength{\annotationSpacing}{0.6cm}
+
+\newcommand{\makeannotation}{
+\clearpage
+\begingroup
+	\titlespacing*{\subsubsection}{0cm}{0cm}{0cm}
+
+	\setlength{\parindent}{0pt}
+	\begingroup
+		\centering
+		\linespread{1}
+		
+		\Large Žilinská univerzita v Žiline, Elektrotechnická fakulta \\
+		Katedra riadiacich a informačných systémov
+	
+		\vspace{\annotationSpacing}
+	
+		\Large \MakeUppercase{Anotačný záznam -- diplomová práca}
+	
+	\endgroup
+	
+	\vspace{\annotationSpacing}
+	
+	\begingroup
+		\normalsize
+		
+		\textbf{Meno a priezvisko:} \Author \hfill \textbf{Akademický rok: \AcademicYear} \\
+		\textbf{Názov práce:} \Title
+		
+		\vspace{\annotationSpacing}
+		
+		\begin{tabular}{@{}p{0.33\textwidth}p{0.33\textwidth}p{0.33\textwidth}}
+		\textbf{Počet strán:} \theTotPages&
+		\textbf{Počet obrázkov:} \totalfigures &
+		\textbf{Počet tabuliek:} \totaltables \\
+		
+		\textbf{Počet kapitol:} \total{truechapters} &
+		\textbf{Počet príloh:} \total{appendixchapters} &
+		\textbf{Počet použit. lit.:} \total{citenum}
+		\end{tabular}
+		
+		\vskip 1cm minus 1cm
+		\subsubsection*{\AnnotationName:}
+		\Annotation
+		
+		\vskip 1cm minus 1cm
+		\subsubsection*{\AnnotationNameSecLang:}
+		\AnnotationSecLang
+
+		\vskip 1cm minus 1cm
+		\subsubsection*{\KeywordsName:}
+		\Keywords
+		
+		\vskip 1cm minus 1cm
+		
+		\textbf{Vedúci diplomovej práce:} \Supervisor \\
+		\@ifundefined{Consultant}{}{
+		\textbf{Konzultant:} \Consultant \\}
+		\textbf{Recenzent:} \Reviewer
+		
+		\vskip 1cm minus 1cm
+		
+		\textbf{Dátum odovzdania práce:} \Date
+	\endgroup
+\endgroup
+\clearpage
+}
+
+\newcommand{\makeacknowledgements}{
+	\@ifundefined{Acknowledgements}{}{
+		\clearpage
+		
+		\vspace*{\fill}
+		
+		\section*{Poďakovanie}
+		
+		\Acknowledgements
+		
+		\vspace*{\fill}
+	}
+}
+
+\newcommand{\makeAppendixPage}{
+% Only display this, if there is at least 1 appendix.
+\ifnum\value{appendixchapters@totc}>\z@
+	\clearpage
+	\thispagestyle{empty}
+	
+	\phantomsection
+	\addcontentsline{toc}{part}{Prílohová časť}
+		
+	\begingroup
+		\setlength{\parindent}{0pt}
+		\begingroup
+			\centering
+			
+			\Large Žilinská univerzita v Žiline
+			
+			\large Elektrotechnická fakulta
+		
+		\endgroup
+		
+		\vspace{2.55cm}
+		
+		\begingroup
+			\large \DocID
+		\endgroup
+		
+		\vfill
+		
+		\begingroup
+			\centering
+			
+			\Large \MakeUppercase{\Title}
+			
+			\normalsize \MakeUppercase{Prílohová časť}
+		
+		\endgroup
+		
+		\vfill
+		
+		\begingroup
+			\large 2017
+			
+			\Author
+		\endgroup
+		
+		\clearpage
+	
+	\endgroup
+
+\else
+	\relax
+\fi
+}
+
+\fi
+
+%-----------------------------------------------------------
+%                   Signature box macro
+%-----------------------------------------------------------
+
+\newcommand*{\SignatureBox}[2][2.2in]{%
+	\par\noindent\makebox[#1]{\hrulefill}%
+	\par\noindent\makebox[#1][c]{#2}%
+}%
+
+\endinput

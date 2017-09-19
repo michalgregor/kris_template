@@ -1,0 +1,84 @@
+% !TeX spellcheck = sk_SK
+
+% suppress some commands in TOC and lists
+\begingroup
+
+\renewcommand{\ac}[1]{#1}
+\renewcommand{\cite}[1]{}
+
+%----------------------------------------------------------
+%                        TOC
+%----------------------------------------------------------
+\tableofcontents
+
+%----------------------------------------------------------
+%                    List of Abbrs
+%----------------------------------------------------------
+
+\acsetup{page-ref=comma,list-style=acronyms
+}{
+	\ifargoutempty{\printacronyms[include-classes=abbrev,heading=none]}{}{
+		\unchapter{Zoznam skratiek}
+		\FirstArg
+	}
+}
+
+%----------------------------------------------------------
+%                    List of Terms
+%----------------------------------------------------------
+
+\newlist{dict}{description}{1}
+\setlist[dict]{
+	style=unboxed,
+	labelindent=0pt,
+	itemindent=0pt,
+	listparindent=0pt,
+  	leftmargin=0cm,
+  	font=\addcolon
+}
+\DeclareAcroListStyle{dictstyle}{list}{ list = dict }
+
+\newlist{subdict}{description}{1}
+\setlist[subdict]{
+	style=nextline,
+	leftmargin=0cm,
+	labelindent=0cm,
+	itemindent=1cm,
+	listparindent=0pt,
+  	font=\normalfont\textit
+}
+
+\acsetup{page-ref=none,list-style=dictstyle,extra-style=plain,extra-format={\;},only-used=false}{
+\ifargoutempty{\printacronyms[include-classes=dict,heading=none]}{}{
+	\unchapter{Slovník pojmov}
+	\setlength{\columnseprule}{0.2pt}
+	\setlength{\columnsep}{1.25cm}
+	\begin{multicols}{2}
+	\FirstArg
+	\end{multicols}
+}}
+
+%----------------------------------------------------------
+%                    List of Figures
+%----------------------------------------------------------
+\iftotalfigures\listoffigures\fi
+
+%----------------------------------------------------------
+%                    List of Tables
+%----------------------------------------------------------
+\iftotaltables\listoftables\fi
+
+\endgroup % suppress some commands in TOC and lists
+
+%----------------------------------------------------------
+%				 Abstrakt, anotácia
+%----------------------------------------------------------
+
+\makeabstract
+\makeannotation
+
+%----------------------------------------------------------
+%					Poďakovanie.
+%----------------------------------------------------------
+
+\makeacknowledgements
