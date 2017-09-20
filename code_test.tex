@@ -1,0 +1,271 @@
+% !TeX spellcheck = sk_SK
+% LaTeX document class
+\documentclass{kris}
+
+%-----------------------------------------------------------
+%             Abbreviation and term database
+%-----------------------------------------------------------
+%\input{modules/abbterms.tex}
+
+%-----------------------------------------------------------
+%            Súbory s bibliografickými informáciami
+%-----------------------------------------------------------
+%\addbibresource{bibliography.bib}
+
+%-----------------------------------------------------------
+%                  Jazykové nastavenia
+%-----------------------------------------------------------
+\usepackage[english,slovak]{babel}
+
+%----------------------------------------------------------
+%                Informácie o dokumente
+%----------------------------------------------------------
+
+%\title{Názov práce}
+%\author{Titul, meno a priezvisko}
+%\keywords{Vložte minimálne 4 kľúčové slová výstižne charakterizujúce spracovanú tému.}
+%\keywordsSecLang{Insert the minimum of 4 keywords that accurately characterize your topic.}
+%
+%\keywordsName{Kľúčové slová}
+%\keywordsNameSecLang{Keywords}
+%
+%\doctype{Diplomová práca}
+%\docid{Evidenčné číslo práce}
+%\supervisor{Titul, vedúci práce}
+%\consultant{Titul, konzultant práce}
+%\reviewer{Titul, recenzent práce}
+%\academicyear{2017/2018}
+%
+%% Abstrakt v hlavnom jazyku
+%\abstract{Abstrakt}{
+%Abstrakt obsahuje informáciu o cieľoch práce, jej stručnom obsahu a v závere abstraktu sa charakterizuje splnenie cieľa, výsledky a význam celej práce. Abstrakt sa píše súvisle ako jeden odsek a jeho rozsah je spravidla 100 až 500 slov.
+%}
+%
+%% Abstrakt v cudzom jazyku (anglickom, nemeckom, ...)
+%\abstractSecLang{Abstract}{
+%In this place insert the text of the abstract in English or another foreign language. Sem vložte text abstraktu v angličtine, prípadne v inom cudzom jazyku.
+%}
+%
+%% Anotácia v hlavnom jazyku
+%\annotation{Anotácia v slovenskom jazyku}{
+%Anotácia je krátka charakteristika, stručný popis informačného zdroja nasledujúci bibliografickú citáciu. Anotácia môže obsahovať sumár kľúčových bodov zdroja, opis druhu zdroja a jeho ohodnotenie. Na rozdiel od abstraktu, čo je krátky objektívny popis zdroja, anotácia je kritické alebo subjektívne hodnotenie diela zvyčajne zahrnuté v bibliografii alebo citácii.
+%}
+%
+%% Anotácia v cudzom jazyku (anglickom, nemeckom, ...)
+%\annotationSecLang{Anotácia v anglickom jazyku}{
+%Anotácia je krátka charakteristika, stručný popis informačného zdroja nasledujúci bibliografickú citáciu. Anotácia môže obsahovať sumár kľúčových bodov zdroja, opis druhu zdroja a jeho ohodnotenie. Na rozdiel od abstraktu, čo je krátky objektívny popis zdroja, anotácia je kritické alebo subjektívne hodnotenie diela zvyčajne zahrnuté v bibliografii alebo citácii.
+%}
+%
+%\date{Dátum odovzdania práce}
+%
+%\acknowledgements{
+%	Poďakovanie nie je povinné. Ak nemá byť zahrnuté, stačí túto časť zakomentovať.
+%}
+%
+%%----------------------------------------------------------
+%%		 Vybrané metadáta zapíšeme aj do dokumentu.
+%%----------------------------------------------------------
+%
+%\hypersetup{
+%	pdfauthor={\Author},%
+%    pdftitle={\Title},%
+%    pdfsubject={\Doctype},%
+%    pdfkeywords={\Keywords},%
+%    pdfproducer={LaTeX},%
+%%    pdfcreator={pdfLaTeX}
+%}
+
+%----------------------------------------------------------
+%						Includeonly
+%----------------------------------------------------------
+
+%\includeonly{
+%kap_uvod
+%}
+
+%----------------------------------------------------------
+%		Korektné zalamovanie spojok na konci riadku.
+%----------------------------------------------------------
+%\usepackage{encxvlna}
+
+%----------------------------------------------------------
+%					Začiatok dokumentu
+%----------------------------------------------------------
+
+
+%\renewcommand{\headrulewidth}{1pt}
+
+
+%\usepackage[]{geometry}
+%
+%
+
+
+
+
+%\usepackage[showframe]{geometry}
+%\RequirePackage{fancyhdr}
+
+
+
+
+\fancypagestyle{default}{
+  \pagenumbering{arabic}
+%  \fancyhf{}% remove everything
+%  \rfoot{\thepage}
+%  \rhead{\leftmark}
+  \renewcommand{\headrulewidth}{2pt} % remove lines as well
+%  \renewcommand{\footrulewidth}{0pt}
+  
+  \fancypagestyle{plain}{
+%    \fancyhf{}% remove everything
+%    \rfoot{\thepage}
+%    \rhead{\leftmark}
+    \renewcommand{\headrulewidth}{2pt} % remove lines as well
+%    \renewcommand{\footrulewidth}{0pt}
+  }
+}
+
+\begin{document}
+
+%----------------------------------------------------------
+%				 Obálka a titulná strana
+%----------------------------------------------------------
+
+%\makecover
+%\maketitle
+
+%----------------------------------------------------------
+%						 Zadanie
+%----------------------------------------------------------
+
+%\includepdf[fitpaper]{modules/zadanie.pdf}
+
+%----------------------------------------------------------
+%				Front Matter (TOC, LOF, ...)
+%----------------------------------------------------------
+%\frontmatter
+%\include{frontmatter}
+
+%----------------------------------------------------------
+%						Document
+%----------------------------------------------------------
+%\mainmatter
+
+
+%\newsectionwidth{0in}
+
+%\pagestyle{plain}
+
+
+
+\pagestyle{default}
+
+
+
+\chapter{Kapitola}
+
+Test
+
+\newpage
+
+%\blindtext
+
+Tepte pete fluchta
+
+zemiak
+
+
+
+%\begin{inlinecode}[noattach=false,label={lst:inline_code},
+%caption={Príklad krátkeho zdrojového kódu.}]{python}
+%def  powerpowerpowerpowerpowerpowerpower(x):
+%	return x ** 2
+%\end{inlinecode}
+%
+%
+%
+%
+%\begin{inlinecode}[noattach=false,label={lst:inline_code},
+%caption={Príklad krátkeho zdrojového kódu.}]{python}
+%# Česť
+%def tesst(x):
+%	return x ** 2
+%\end{inlinecode}
+
+
+
+%\begin{VerbatimOut}{test.txt}
+%Čokel
+%\end{VerbatimOut}
+
+
+
+
+%\begin{code}
+%\caption{Ukážka dlhšieho zdrojového kódu.}
+%\inputcode[noattach=false,breaklines=True,firstline=5,lastline=38]{python}{listings/delta_rule.py}
+%\label{lst:delta_rule}
+%\end{code}
+
+
+%\begin{inlinecode}
+%def power(x):
+%	return x ** 2
+%\end{inlinecode}
+
+
+%\stepcounter{TFFile}
+%\def\TFFname{\jobname-code-\theTFFile.py}
+%\begin{VerbatimOut}{\TFFname}
+%def power(x):
+%    return x ** 2
+%\end{VerbatimOut}
+%\begin{code}
+%\inputcode{python}{\mintedoutputdir/\TFFname}
+%\end{code}
+%
+%
+%
+%
+%\stepcounter{TFFile}
+%\def\TFFname{\jobname-code-\theTFFile.py}
+%\begin{VerbatimOut}{\TFFname}
+%def power2(x):
+%    return x ** 2
+%\end{VerbatimOut}
+%\begin{code}
+%\inputcode[noattach=False]{python}{\mintedoutputdir/\TFFname}
+%\end{code}
+
+
+%\include{kap_uvod}
+%\include{kap_sablona}
+%\include{kap_latex}
+%\include{kap_citacie}
+%\include{kap_typografia}
+
+%----------------------------------------------------------
+%                     Bibliography
+%----------------------------------------------------------
+
+%\bibliographystyle{iso690_nosort}
+%% argument is your BibTeX string definitions and bibliography database(s)
+%{
+%\small
+%\setlength{\bibsep}{0.1em}
+%\bibliography{bibliography}
+%}
+
+%\printbibliography[heading=bibintoc,title={Zoznam použitej literatúry}]
+
+%----------------------------------------------------------
+%						Appendix
+%----------------------------------------------------------
+
+%\makeAppendixPage
+%\appendix
+
+%\include{priloha1}
+
+\end{document}
