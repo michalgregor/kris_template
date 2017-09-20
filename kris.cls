@@ -464,3 +464,22 @@
 	\relax
 \fi
 }
+
+\newcommand{\makeDeclaration}{
+	\newpage\thispagestyle{empty}
+	\vspace*{\fill}
+	
+	{\centering \large \MakeUppercase{Čestné vyhlásenie}\\[1em]}
+	
+	Vyhlasujem, že som zadanú diplomovú prácu vypracoval  samostatne, pod odborným vedením vedúceho diplomovej práce, ktorým bol \Supervisor\ a používal som len literatúru uvedenú v práci.
+	
+	Súhlasím so zapožičiavaním diplomovej práce.
+	
+	\vspace{2.5em}
+	
+	\Date, Žilina
+	
+	{\raggedleft\SignatureBox{podpis}\\}
+	
+	\vfill
+}
