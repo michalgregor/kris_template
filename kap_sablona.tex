@@ -41,7 +41,7 @@ Pri kompilácii dokumentu môžeme postupovať dvojako -- buď použijeme lokál
 
 \subsection{Cloudové riešenie -- služba Overleaf}
 
-Jednou možnosťou pri kompilácii LaTeX-ových dokumentov je použiť cloudové riešenie -- napríklad služby Overleaf: \href{https://www.overleaf.com/}{overleaf.com}. Po registrácii dostane užívateľ k dispozícii priestor kam môže uploadovať svoje dokumenty, pracovať na nich, kompilovať ich do formátu PDF atď. Služba Overleaf umožňuje aj vytváranie rôznych verzií dokumentu a má rozhranie pre git. Hlavnou výhodou cloudového riešenia však je, že lokálne nie je potrebné nič inštalovať.
+Jednou možnosťou pri kompilácii LaTeX-ových dokumentov je použiť cloudové riešenie -- napríklad služby Overleaf: \href{https://www.overleaf.com/}{overleaf.com}. Po registrácii dostane užívateľ k dispozícii priestor kam môže uploadovať svoje dokumenty, pracovať na nich, kompilovať ich do formátu PDF atď. Služba Overleaf umožňuje aj vytváranie rôznych verzií dokumentu a má rozhranie pre git. Hlavnou výhodou cloudového riešenia však je, že lokálne nie je potrebné nič inštalovať. Na druhej strane, naša skúsenosť je, že kompilácia pomocou služby Overleaf trvá pomerne dlho.
 
 \subsubsection{Limitovaný počet súborov}
 
@@ -55,21 +55,33 @@ Jednou z populárnych distribúcií LaTeX-u je distribúcia TeX Live. Na Linux-e
 
 \section{Encxvlna a správne zalamovanie}
 
-Slovenská typografia je charakteristická jednou mierne excentrickou požiadavkou -- že niektoré predložky a spojky nesmú byť na konci riadku. Ak sa tam vyskytnú, musia sa už zalomiť do nasledujúceho riadku. Na realizáciu tejto funkcionality v LaTeX-u je potrebné použiť balíček \texttt{encxvlna}.
+Slovenská typografia je charakteristická jednou mierne excentrickou požiadavkou -- že niektoré predložky a spojky nesmú byť na konci riadku. Ak sa tam vyskytnú, musia sa už zalomiť do nasledujúceho riadku. Na realizáciu tejto funkcionality v LaTeX-u je potrebné použiť balíček \texttt{encxvlna}. Drobná komplikácia spočíva v tom, že tento balíček vyžaduje aktiváciu systému \texttt{enctex}.
 
-Drobná komplikácia spočíva v tom, že tento balíček vyžaduje aktiváciu systému \texttt{enctex}. V inštalácii TeXLive je možné \texttt{enctex} aktivovať tak, že sa vytvorí súbor s názvom \texttt{fmtutil.cnf} -- buď v rámci LaTeX adresára na ceste \texttt{texmf-local/web2c} alebo v rámci domovského adresára na ceste \texttt{texmf/web2c}.
-
-Obsah súboru bude nasledovný:
+V inštalácii TeXLive je možné \texttt{enctex} aktivovať buď pre užívateľa alebo pre celý systém. V oboch prípadoch je na to potrebné vytvoriť súbor s názvom \texttt{fmtutil.cnf}, ktorý bude obsahovať:
 \begin{Verbatim}
 pdflatex pdftex language.dat -enc -translate-file=cp227.tcx *pdflatex.ini
 \end{Verbatim}
 Kľúčová je časť \texttt{-enc}, ktorá hovorí, že sa má povoliť \texttt{enctex}.
 
+\subsection{Aktivácia \texttt{enctex}-u pre užívateľa}
+
+V prípade aktivácie pre užívateľa je súbor \texttt{fmtutil.cnf} potrebné umiestniť do domovského adresára užívateľa, na cestu \texttt{texmf/web2c}.
+
 Následne treba z príkazového riadku spustiť príkaz:
 \begin{Verbatim}
-fmtutil --all
+fmtutil -user --all
 \end{Verbatim}
-ktorý nanovo prekompiluje LaTeX formáty tak, že príkaz pdflatex bude mať aktivovaný \texttt{enctex}.
+ktorý nanovo prekompiluje užívateľské LaTeX formáty tak, že príkaz pdflatex bude mať aktivovaný \texttt{enctex}.
+
+\subsection{Aktivácia \texttt{enctex}-u pre celý systém}
+
+V prípade aktivácie pre celý systém sa súbor \texttt{fmtutil.cnf} umiestni do adresára LaTeX-ovej inštalácie, na cestu \texttt{texmf-local/web2c}. Následne je znovu potrebné prekompilovať LaTeX formáty, lenže systémové. Používa sa na to príkaz:
+\begin{Verbatim}
+fmtutil -sys --all
+\end{Verbatim}
+Keďže príkaz modifikuje systémovú inštaláciu, môže byť potrebné spustiť ho s administrátorskými privilégiami. Napr. na Ubuntu sa to dosiahne pomocou príkazu \texttt{sudo}.
+
+\subsection{Overleaf a \texttt{enctex}}
 
 V systéme Overleaf nie je enctex možné aktivovať -- preto na kompiláciu dokumentu je potrebné zakomentovať riadok \texttt{\textbackslash{usepackage}\{encxvlna\}} v \texttt{main.tex}.
 
