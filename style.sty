@@ -349,13 +349,13 @@
 
 \@ifundefined{auxfiles}
 {
-	\newcommand{\mintedoutputdir}{{}}
+	\newcommand{\mintedoutputdir}{}
 	\newcommand{\listingspath}{}
 	
 	\RequirePackage[cache]{minted}
 } {
 	\ifargoutempty{\auxfiles}{
-		\newcommand{\mintedoutputdir}{auxfiles}
+		\newcommand{\mintedoutputdir}{auxfiles/}
 	}{
 		\newcommand{\mintedoutputdir}{\auxfiles}
 	}
@@ -413,7 +413,7 @@
 \define@key{inlinecode}{fontsize}{\def\inlinecode@fontsize{#1}}
 \define@key{inlinecode}{baselinestretch}{\def\inlinecode@baselinestretch{#1}}
 
-\setkeys{inlinecode}{noattach=false,linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
+\setkeys{inlinecode}{noattach=true,linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
 
 \newenvironment{noattach@inlinecode}[2]{
 	\begin{center}
@@ -440,6 +440,7 @@
   	\renewcommand{\discretionary}[3]{#2}
 	\setkeys*{inlinecode}{#1}
 	\let\inlinecode@XKV@rm\XKV@rm
+	\def\inlinecode@SecondArg{#2}
 	% the \if\else\fi construct seems to break code below,
 	% so we use ifundefined with an auxiliary macro instead
 	\let\inlinecode@noattach@aux\relax
@@ -451,6 +452,8 @@
 	}{
 	\stepcounter{inlinecode@filecounter}
 	\def\inlinecode@filename{\jobname-code-\theinlinecode@filecounter.txt}
+    \let\FVB@VerbatimOut\minted@FVB@VerbatimOut
+    \let\FVE@VerbatimOut\minted@FVE@VerbatimOut
 	\begin{VerbatimOut}{\inlinecode@filename}%
 	}%
 }{
@@ -464,12 +467,12 @@
 		\caption{\inlinecode@caption}
 	}
 	\viewonly{
-		\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir/\inlinecode@filename}{\opensourcecode}}
+		\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir\inlinecode@filename}{\opensourcecode}}
 	}
 	\@ifundefined{inlinecode@label}{}{
 		\label{\inlinecode@label}
 	}
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{python}{\mintedoutputdir/\inlinecode@filename}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}
 	\end{code}
 	}%
 	\endgroup
