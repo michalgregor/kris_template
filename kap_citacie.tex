@@ -1,9 +1,9 @@
 % !TeX spellcheck = sk_SK
 \chapter{Ako citovať}
 
-Bibliografické informácie pre LaTeX sa ukladajú vo zvláštnom formáte BibTeX -- v súboroch s príponou \texttt{.bib}. Ukážku BibTeX záznamu pre knihu \enquote{Genetické algoritmy a genetické programování} vidno v \listingname~\ref{lst:hynek_bib}.
+Bibliografické informácie pre LaTeX sa ukladajú vo zvláštnom formáte BibTeX -- v súboroch s príponou \texttt{.bib}. Ukážka BibTeX záznamu pre knihu \enquote{Genetické algoritmy a genetické programování} nasleduje tu:
 
-\begin{inlinecode}[label={lst:hynek_bib},caption={Ukážka BibTeX záznamu.},breaklines]{text}
+\begin{inlinecode}[breaklines]{text}
 @Book{Hynek2008,
   Title                    = {Genetické algoritmy a genetické programování},
   Author                   = {Josef Hynek},
@@ -63,7 +63,7 @@ V tejto časti uvedieme príklady BibTex položiek pre najčastejšie citované 
 \subsection{Knižná publikácia}
 
 BibTex položka pre knižnú publikáciu môže vyzerať napríklad nasledovne:
-\begin{inlinecode}[label={lst:book_bib},caption={Ukážka BibTeX záznamu pre knihy.},breaklines]{text}
+\begin{inlinecode}[breaklines]{text}
 @Book{Kikimor2008,
   Title                    = {Mrkva, zemiaky a iná koreňová zelenina},
   Author                   = {Jozef Kikimor and Juraj Holota},
@@ -214,6 +214,45 @@ Vo vzácnych prípadoch sa dá citovať aj časopis ako celok -- možno na to po
 Výsledná citácia bude vyzerať nasledovne:
 
 \noindent[X] \fullcite{periodical2014}
+
+\subsection{Záverečná práca}
+
+Na citáciu záverečnej práce sa dá použiť záznam typu \texttt{thesis}, \texttt{MastersThesis} alebo \texttt{PhDThesis}. Náš citačný štýl medzi týmito typmi záznamov nerozlišuje, preto je možné pre ľubovoľný typ záverečnej práce použiť ktorýkoľvek z nich. Záznam bude v tvare:
+\begin{inlinecode}[breaklines]{text}
+@MastersThesis{thesis2015,
+  Title                    = {Diaľková preprava záhradných trpaslíkov},
+  Author                   = {Matej Kukár},
+  School                   = {Univerzita makového koláča v Krpeľanoch},
+  Year                     = {2015},
+  Type                     = {diplomová práca},
+  supervisor               = {Vendelín Lopota},
+}
+\end{inlinecode}
+
+Výsledná citácia sa zobrazí nasledovne:
+
+\noindent[X] \fullcite{thesis2015}
+
+Pole \texttt{type} môže mať aj špeciálne hodnoty, napr. hodnoty \texttt{mathesis} a \texttt{phdthesis} sa automaticky nahradia slovnými spojeniami diplomová práca a dizertačná práca v jazyku dokumentu.
+
+\subsection{Technická/výskumná správa}
+
+Niekedy je potrebné citovať technické a výskumné správy vydané nejakou inštitúciou -- napr. firmou, výskumným inštitútom alebo vysokou školou. Pri citácii takýchto správ treba uviesť hlavne názov inštitúcie a číslo správy. Dajú sa použiť záznamy typu \texttt{report} alebo \texttt{techreport}, napr.:
+\begin{inlinecode}[breaklines]{text}
+@TechReport{Moffaert2013report,
+  Title                    = {Efficient Weight Space Search in Multi-Objective Reinforcement Learning},
+  Author                   = {Kristof Van Moffaert and Tim Brys and Ann Now{\'e}},
+  Institution              = {Artificial Intelligence Lab, Vrije Universiteit Brussel},
+  Year                     = {2013},
+  Number                   = {AI-TR-14-69},
+  Type                     = {resreport}
+}
+\end{inlinecode}
+Za zmienku stojí, že pole \texttt{type} môže mať opäť aj špeciálne hodnoty -- napr. hodnoty \texttt{techreport} pre technickú správu a \texttt{resreport} pre výskumnú správu.
+
+Výsledná citácia sa zobrazí nasledovne:
+
+\noindent[X] \fullcite{Moffaert2013report}
 
 \subsection{Elektronický zdroj}
 

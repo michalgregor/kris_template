@@ -20,6 +20,16 @@
   ,minnames=1
 }
 
+% support for supervisor name in theses
+\DeclareDatamodelFields[type=list,datatype=name]{supervisor}
+\NewBibliographyString{supervisor}
+\DefineBibliographyStrings{english}{%
+   supervisor = {sup\adddotspace}
+}
+\DefineBibliographyStrings{slovak}{%
+   supervisor = {ved\adddotspace}
+}
+
 \newbibmacro*{begentry}{}
 \newbibmacro*{finentry}{\finentry\adddot}
 
@@ -86,16 +96,20 @@
 \def\addhyphen{\printtext{-}}%
 \DeclareFieldFormat{urldate}{\printfield{urlyear}\addhyphen\printfield{urlmonth}\addhyphen\printfield{urlday}}%
 
+\DeclareFieldFormat{type}{\ifbibstring{#1}{\bibstring{#1}}{\MakeCapital{#1}}}
+
 \DeclareNameAlias{default}{last-first}
 
 \newbibmacro*{pubinfo}{%
-  \iflistundef{location}{}{\printlist{location}}%
+  \let\krbbl@onepresent\relax%
+  \iflistundef{location}{}{\printlist{location}\def\krbbl@onepresent{}}%
   \iflistundef{publisher}{}{%
-    \iflistundef{location}{}{\setunit{\addspcolon\addspace}}%
+    \def\krbbl@onepresent{}%
+    \iflistundef{krbbl@onepresent}{}{\setunit{\addspcolon\addspace}}%
     \printlist{publisher}%
   }%
-  \newunit
-  \iflistundef{publisher}{}{\setunit{\addcomma\addspace}}%
+  \newunit%
+  \@ifundefined{krbbl@onepresent}{}{\setunit{\addcomma\addspace}}%
   \usebibmacro{date}%
 }%
 
@@ -321,6 +335,16 @@
   }%
 }%
 
+\newbibmacro*{supervision}{%
+  \bgroup%
+  \ifnameundef{supervisor}{}{%
+    \renewcommand{\lastnameformat}{}%
+    \bibstring{supervisor}\addspace%
+    \printnames{supervisor}%
+  }%
+  \egroup%
+}%
+
 \DeclareFieldFormat{journaltitle}{#1}
 \DeclareFieldFormat{booktitle}{#1}
 \DeclareFieldFormat{maintitle}{#1}
@@ -353,6 +377,16 @@
 \printfield{edition}%
 \newunit\newblock%
 \printfield{series}%
+\newunit\newblock%
+\printfield{type}%
+\newunit%
+\setunit{\addspace}%
+\printfield{number}%
+\newunit%
+\setunit{\addcomma\addspace}%
+\printlist{institution}%
+\newunit\newblock%
+\usebibmacro{supervision}%
 \newunit\newblock%
 \printfield{note}%
 \newunit\newblock%
@@ -446,6 +480,8 @@
 
 % aliases
 \DeclareBibliographyAlias{online}{book}
+\DeclareBibliographyAlias{thesis}{book}
+\DeclareBibliographyAlias{report}{book}
 \DeclareBibliographyAlias{incollection}{book}
 \DeclareBibliographyAlias{inbook}{book}
 \DeclareBibliographyAlias{bookinbook}{inbook}
