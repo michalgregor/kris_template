@@ -20,14 +20,12 @@
   ,minnames=1
 }
 
-% support for supervisor name in theses
-\DeclareDatamodelFields[type=list,datatype=name]{supervisor}
-\NewBibliographyString{supervisor}
+\NewBibliographyString{bysupervisor}
 \DefineBibliographyStrings{english}{%
-   supervisor = {sup\adddotspace}
+   bysupervisor = {Thesis supervisor}
 }
 \DefineBibliographyStrings{slovak}{%
-   supervisor = {ved\adddotspace}
+   bysupervisor = {Ved\'{u}ci pr\'{a}ce}
 }
 
 \newbibmacro*{begentry}{}
@@ -99,13 +97,14 @@
 \DeclareFieldFormat{type}{\ifbibstring{#1}{\bibstring{#1}}{\MakeCapital{#1}}}
 
 \DeclareNameAlias{default}{last-first}
+\DeclareNameAlias{supervisor}{first-last}
 
 \newbibmacro*{pubinfo}{%
   \let\krbbl@onepresent\relax%
   \iflistundef{location}{}{\printlist{location}\def\krbbl@onepresent{}}%
   \iflistundef{publisher}{}{%
     \def\krbbl@onepresent{}%
-    \iflistundef{krbbl@onepresent}{}{\setunit{\addspcolon\addspace}}%
+    \iflistundef{location}{}{\setunit{\addcolon\addspace}}%
     \printlist{publisher}%
   }%
   \newunit%
@@ -335,15 +334,16 @@
   }%
 }%
 
-\newbibmacro*{supervision}{%
+\newbibmacro*{thesissupervisor}{%
   \bgroup%
-  \ifnameundef{supervisor}{}{%
-    \renewcommand{\lastnameformat}{}%
-    \bibstring{supervisor}\addspace%
-    \printnames{supervisor}%
-  }%
+  \ifnameundef{supervisor}
+    {}
+    {\renewcommand{\lastnameformat}{}%
+     \printtext{\mainlstring{bysupervisor}}%
+     \addspace%
+     \printnames{supervisor}}
   \egroup%
-}%
+}
 
 \DeclareFieldFormat{journaltitle}{#1}
 \DeclareFieldFormat{booktitle}{#1}
@@ -386,7 +386,7 @@
 \setunit{\addcomma\addspace}%
 \printlist{institution}%
 \newunit\newblock%
-\usebibmacro{supervision}%
+\usebibmacro{thesissupervisor}
 \newunit\newblock%
 \printfield{note}%
 \newunit\newblock%
