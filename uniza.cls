@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{kris}[2017/09/20 KRIS LaTeX Class]
+\ProvidesClass{uniza}[2017/09/20 UNIZA LaTeX Class]
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions \relax
@@ -7,14 +7,17 @@
 \LoadClass[12pt,a4paper,oneside,openany]{book}
 
 %-----------------------------------------------------------
-%               Fonts, paragraphs.
+%                     Encoding
 %-----------------------------------------------------------
 
-% fonts
-\usepackage{newtxtext,newtxmath} % must come before minted
-\renewcommand*\ttdefault{lmvtt}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
 
-% 1.5 line spacing; this has to go before the geometry package!
+%-----------------------------------------------------------
+%                    spacing equation spacing
+%-----------------------------------------------------------
+
+\usepackage{etoolbox}
 \usepackage[doublespacing,nodisplayskipstretch]{setspace}
 
 % paragraph spacing
@@ -32,7 +35,140 @@
 %               	KRIS utils.
 %-----------------------------------------------------------
 
-\usepackage[document,pagelayout,placement]{kris_utils}
+\usepackage[pagelayout,biblatex]{uniza_utils}
+
+%-----------------------------------------------------------
+%               Fonts, paragraphs.
+%-----------------------------------------------------------
+
+% fonts
+\usepackage{newtxtext,newtxmath} % must come before minted
+\renewcommand*\ttdefault{lmvtt}
+
+%-----------------------------------------------------------
+%               	Listings defaults.
+%-----------------------------------------------------------
+
+% Turn off attaching.
+\setkeys{inputcode}{noattach=true}
+\setkeys{inlinecode}{noattach=true}
+
+%-----------------------------------------------------------
+%                	Metadata macros
+%-----------------------------------------------------------
+
+\newcommand{\subtitle}[1]{\def\Subtitle{#1}}
+\newcommand{\academicyear}[1]{\def\AcademicYear{#1}}
+
+\newcommand{\doctype}[1]{\def\Doctype{#1}}
+\newcommand{\docid}[1]{\def\DocID{#1}}
+\newcommand{\supervisor}[1]{\def\Supervisor{#1}}
+\newcommand{\consultant}[1]{\def\Consultant{#1}}
+\newcommand{\reviewer}[1]{\def\Reviewer{#1}}
+
+\newcommand{\university}[1]{\def\University{#1}}
+\university{Žilinská univerzita v Žiline}
+\newcommand{\faculty}[1]{\def\Faculty{#1}}
+\newcommand{\facultyshort}[1]{\def\FacultyShort{#1}}
+\newcommand{\department}[1]{\def\Department{#1}}
+\newcommand{\supervisorinst}[1]{\def\SupervisorInst{#1}}
+\supervisorinst{\University, \Faculty\par\Department}
+
+\newcommand{\submissionyear}[1]{\def\SubmissionYear{#1}}
+\newcommand{\location}[1]{\def\Location{#1}}
+\newcommand{\fieldofstudy}[1]{\def\FieldOfStudy{#1}}
+\newcommand{\studyprogramme}[1]{\def\StudyProgramme{#1}}
+
+\newcommand{\keywords}[1]{\def\Keywords{#1}}
+\newcommand{\keywordsName}[1]{\def\KeywordsName{#1}}
+\newcommand{\keywordsSecLang}[1]{\def\KeywordsSecLang{#1}}
+\newcommand{\keywordsNameSecLang}[1]{\def\KeywordsNameSecLang{#1}}
+
+\newcommand{\abstract}[2]{
+\def\AbstractName{#1}
+\def\Abstract{#2}
+}
+
+\newcommand{\abstractSecLang}[2]{
+\def\AbstractNameSecLang{#1}
+\def\AbstractSecLang{#2}
+}
+
+\newcommand{\annotation}[2]{
+\def\AnnotationName{#1}
+\def\Annotation{#2}
+}
+
+\newcommand{\annotationSecLang}[2]{
+\def\AnnotationNameSecLang{#1}
+\def\AnnotationSecLang{#2}
+}
+
+\newcommand{\acknowledgements}[1]{\def\Acknowledgements{#1}}
+
+%-----------------------------------------------------------
+%                Figure numbering, ordering
+%-----------------------------------------------------------
+
+% if chapters exist, number by chapters, otherwise by sections
+\def\numberby{chapter}
+
+%2-level equation numbering
+\numberwithin{equation}{chapter}
+%2-level figure numbering
+\numberwithin{figure}{chapter}
+%2-level table numbering
+\numberwithin{table}{chapter}
+
+% keep floats in their sections
+%\RequirePackage[section]{placeins}
+
+%-----------------------------------------------------------
+%              		Settings.
+%-----------------------------------------------------------
+
+% Path to graphics.
+\graphicspath{{images/}}
+
+% Decimal mark.
+\usepackage{siunitx}
+\sisetup{output-decimal-marker = {,}}
+
+%-----------------------------------------------------------
+%              	Bibliography styling
+%-----------------------------------------------------------
+
+%\AtBeginBibliography{
+%	\fontencoding{T1}
+%	\fontseries{m}
+%	\fontsize{12}{15}
+%	\selectfont
+%}
+
+%-----------------------------------------------------------
+%              List style for acro dictionary
+%-----------------------------------------------------------
+
+\newlist{dict}{description}{1}
+\setlist[dict]{
+	style=unboxed,
+	labelindent=0pt,
+	itemindent=0pt,
+	listparindent=0pt,
+  	leftmargin=0cm,
+  	font=\addcolon
+}
+\DeclareAcroListStyle{dictstyle}{list}{ list = dict }
+
+\newlist{subdict}{description}{1}
+\setlist[subdict]{
+	style=nextline,
+	leftmargin=0cm,
+	labelindent=0cm,
+	itemindent=1cm,
+	listparindent=0pt,
+  	font=\normalfont\textit
+}
 
 %-----------------------------------------------------------
 %                        Page layout
@@ -46,8 +182,9 @@
   \pagenumbering{arabic}
   \fancyhf{}% remove everything
   \rfoot{\thepage}
-  \rhead{\leftmark}
-  \renewcommand{\headrulewidth}{1pt} % remove lines as well
+  \lhead{\FacultyShort}
+  \rhead{\MakeUppercase{\Doctype}}
+  \renewcommand{\headrulewidth}{0pt} % remove lines as well
   \renewcommand{\footrulewidth}{0pt}
   
   \fancypagestyle{plain}{
@@ -123,9 +260,10 @@
   \pagenumbering{Roman}
   \fancyhead{} % remove everything
   \fancyfoot{} % remove everything
-  \rhead{\textsc{Prílohová čast}}
+  \lhead{\FacultyShort}
+  \rhead{\MakeUppercase{Prílohová čast}}
   \rfoot{\thepage}
-  \renewcommand{\headrulewidth}{1pt} % remove lines as well
+  \renewcommand{\headrulewidth}{0pt} % remove lines as well
   \renewcommand{\footrulewidth}{0pt}
   
   \fancypagestyle{plain} {
@@ -209,37 +347,45 @@
 \begingroup
 	\setlength{\parindent}{0pt}
 	\begingroup
-		\centering
+		\centering\Large
 		
-		\Large Žilinská univerzita v Žiline
+		\textbf{\MakeUppercase{\University}}
 		
-		\large Elektrotechnická fakulta
+		\MakeUppercase{\Faculty}
 	
-	\endgroup
-	
-	\vspace{2.55cm}
-	
-	\begingroup
-		\large \DocID
 	\endgroup
 	
 	\vfill
 	
 	\begingroup
 		\centering
+		\huge \MakeUppercase{\Doctype}
 		
-		\Large \MakeUppercase{\Title}
-		
-		\normalsize \MakeUppercase{\Doctype}
-	
 	\endgroup
 	
 	\vfill
 	
 	\begingroup
-		\large 2017
+	\centering\Large	
+	
+	\MakeUppercase{\Author}
+	
+	\textbf{\Title}
+	
+	\@ifundefined{Subtitle}{}{{\large \textbf{\Subtitle}}}
+	
+	\endgroup
+	
+	\vfill
+
+	\begingroup
+		\centering\normalsize
+		Vedúci práce: \Supervisor
 		
-		\Author
+		Evidenčné číslo: \DocID
+		
+		\Location, \SubmissionYear
+		
 	\endgroup
 
 \endgroup
@@ -254,51 +400,54 @@
 \begingroup
 	\setlength{\parindent}{0pt}
 	\begingroup
-		\centering
+		\centering\Large
 		
-		\Large Žilinská univerzita v Žiline
+		\textbf{\MakeUppercase{\University}}
 		
-		\large Elektrotechnická fakulta
-		
-		\large Katedra riadiacich a informačných systémov
+		\MakeUppercase{\Faculty}
 	
 	\endgroup
-			
-	\vfill
 	
+	\vfill
+		
 	\begingroup
 		\centering
+		\huge \MakeUppercase{\Doctype}
 		
-		\Large \MakeUppercase{\Title}
-		
-		\normalsize \MakeUppercase{\Doctype}
-	
 	\endgroup
 	
 	\vfill
 	
 	\begingroup
-		\normalsize				
-		Študijný program: Riadenie procesov \\
-		Študijný odbor: 5.2.14 Automatizácia \\
-		\begin{alignedtext}{@{}l@{ }l}
-		Školiace pracovisko:& Žilinská univerzita v Žiline, Elektrotechnická fakulta,\\
-		& Katedra riadiacich a informačných systémov
-		\end{alignedtext} \\
-		Vedúci diplomovej práce: \Supervisor \\
-		\@ifundefined{Consultant}{}{
-		Konzultant: \Consultant \\
-		}
+	\centering\Large	
+	
+	\MakeUppercase{\Author}
+	
+	\textbf{\Title}
+	
+	\@ifundefined{Subtitle}{}{{\large \textbf{\Subtitle}}}
+	
 	\endgroup
-		
-	\vspace{2cm}
+	
+	\vfill
+	
+	Študijný program: \StudyProgramme \\
+	Študijný odbor: \FieldOfStudy \\
+	Školiace pracovisko:
+	\begin{alignedpage}{\columnwidth}
+	\SupervisorInst
+	\end{alignedpage}
+	Vedúci diplomovej práce: \Supervisor \\
+	\@ifundefined{Consultant}{}{
+	Konzultant: \Consultant \\
+	}
 	
 	\begingroup
-		\normalsize Žilina, 2017
-		
-		\Author
-	\endgroup
+	\centering
 	
+	\Location, \SubmissionYear
+
+	\endgroup
 \endgroup
 \clearpage
 }
@@ -401,7 +550,7 @@
 	\@ifundefined{Acknowledgements}{}{
 		\clearpage
 		
-		\vspace*{\fill}
+		\vspace*{\fill}\vspace*{\fill}
 		
 		\section*{Poďakovanie}
 		
@@ -473,7 +622,7 @@
 	
 	Vyhlasujem, že som zadanú diplomovú prácu vypracoval  samostatne, pod odborným vedením vedúceho diplomovej práce, ktorým bol \Supervisor\ a používal som len literatúru uvedenú v práci.
 	
-	Súhlasím so zapožičiavaním diplomovej práce.
+	Súhlasím so zverejnením práce a jej výsledkov.
 	
 	\vspace{2.5em}
 	

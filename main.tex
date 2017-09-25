@@ -1,6 +1,6 @@
 % !TeX spellcheck = sk_SK
 % LaTeX document class
-\documentclass{kris}
+\documentclass{uniza}
 
 %-----------------------------------------------------------
 %             Abbreviation and term database
@@ -22,6 +22,7 @@
 %----------------------------------------------------------
 
 \title{Názov práce}
+\subtitle{Podnázov práce (ak existuje)}
 \author{Titul, meno a priezvisko}
 \keywords{Vložte minimálne 4 kľúčové slová výstižne charakterizujúce spracovanú tému.}
 \keywordsSecLang{Insert the minimum of 4 keywords that accurately characterize your topic.}
@@ -29,12 +30,30 @@
 \keywordsName{Kľúčové slová}
 \keywordsNameSecLang{Keywords}
 
+\faculty{Elektrotechnická fakulta}
+\department{Katedra riadiacich a informačných systémov}
+
+% školiace pracovisko, ak je iné než katedra:
+%\supervisorinst{
+%	SIEMENS\\
+%	Kompetenčné centrum Žilina
+%}
+
+\facultyshort{EF}
+\location{Žilina}
+
 \doctype{Diplomová práca}
 \docid{Evidenčné číslo práce}
 \supervisor{Titul, vedúci práce}
+%Meno konzultanta (ak existuje):
 \consultant{Titul, konzultant práce}
-\reviewer{Titul, recenzent práce}
-\academicyear{2017/2018}
+
+\academicyear{2017/2018} % akademický rok
+\submissionyear{2018} % rok odovzdania práce
+% Študijný program:
+\studyprogramme{Riadenie procesov}
+% Študijný odbor:
+\fieldofstudy{5.2.14 Automatizácia}
 
 % Abstrakt v hlavnom jazyku
 \abstract{Abstrakt}{
@@ -44,16 +63,6 @@ Abstrakt obsahuje informáciu o cieľoch práce, jej stručnom obsahu a v záver
 % Abstrakt v cudzom jazyku (anglickom, nemeckom, ...)
 \abstractSecLang{Abstract}{
 In this place insert the text of the abstract in English or another foreign language. Sem vložte text abstraktu v angličtine, prípadne v inom cudzom jazyku.
-}
-
-% Anotácia v hlavnom jazyku
-\annotation{Anotácia v slovenskom jazyku}{
-Anotácia je krátka charakteristika, stručný popis informačného zdroja nasledujúci bibliografickú citáciu. Anotácia môže obsahovať sumár kľúčových bodov zdroja, opis druhu zdroja a jeho ohodnotenie. Na rozdiel od abstraktu, čo je krátky objektívny popis zdroja, anotácia je kritické alebo subjektívne hodnotenie diela zvyčajne zahrnuté v bibliografii alebo citácii.
-}
-
-% Anotácia v cudzom jazyku (anglickom, nemeckom, ...)
-\annotationSecLang{Anotácia v anglickom jazyku}{
-Anotácia je krátka charakteristika, stručný popis informačného zdroja nasledujúci bibliografickú citáciu. Anotácia môže obsahovať sumár kľúčových bodov zdroja, opis druhu zdroja a jeho ohodnotenie. Na rozdiel od abstraktu, čo je krátky objektívny popis zdroja, anotácia je kritické alebo subjektívne hodnotenie diela zvyčajne zahrnuté v bibliografii alebo citácii.
 }
 
 \date{Dátum odovzdania práce}
@@ -111,7 +120,48 @@ Anotácia je krátka charakteristika, stručný popis informačného zdroja nasl
 %				Front Matter (TOC, LOF, ...)
 %----------------------------------------------------------
 \frontmatter
-\include{frontmatter}
+
+% suppress some commands in TOC and lists
+\begingroup
+\renewcommand{\ac}[1]{#1}
+\renewcommand{\cite}[1]{}
+
+% Poďakovanie
+\makeacknowledgements
+
+% Abstrakt, anotácia
+\makeabstract
+
+%  TOC
+\tableofcontents
+
+% list of figures
+\iftotalfigures\listoffigures\fi
+
+% list of tables
+\iftotaltables\listoftables\fi
+
+% list of abbreviations
+\acsetup{page-ref=comma,list-style=acronyms
+}{
+	\ifargoutempty{\printacronyms[include-classes=abbrev,heading=none]}{}{
+		\unchapter{Zoznam skratiek}
+		\argoutemptyFirstArg
+	}
+}
+
+% dictionary
+\acsetup{page-ref=none,list-style=dictstyle,extra-style=plain,extra-format={\;},only-used=false}{
+\ifargoutempty{\printacronyms[include-classes=dict,heading=none]}{}{
+	\unchapter{Slovník pojmov}
+	\setlength{\columnseprule}{0.2pt}
+	\setlength{\columnsep}{1.25cm}
+	\begin{multicols}{2}
+	\argoutemptyFirstArg
+	\end{multicols}
+}}
+
+\endgroup % suppress some commands in TOC and lists
 
 %----------------------------------------------------------
 %						Document
