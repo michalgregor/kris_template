@@ -24,6 +24,9 @@ Príkaz bude vyzerať nasledovne:
 ```
 latexmk -silent -bibtex -outdir=auxfiles -pdf -pdflatex="pdflatex -synctex=1 --shell-escape %%O '\def\auxfiles{}\input{%%S}'" %
 ```
+Treba ho vložiť do políčka Latexmk, ku ktorému sa pristupuje cez Options->Configure TeXstudio->Commands. Následne treba v záložke Build zvoliť ako Default Compiler tiež Latexmk.
+
+Okrem toho je dobré v tej istej záložke zvoliť možnosť Show Advanced Options a v dolnej časti okna nastaviť cesty Log File, PDF File a Commands na ``auxfiles``.
 
 ## Balíček encxvlna
 
