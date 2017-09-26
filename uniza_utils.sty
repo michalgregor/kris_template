@@ -305,12 +305,12 @@
 \newcommand{\inputcode}[3][]{
 \begingroup
 \setkeys*{inputcode}{#1}
-	\viewonly{
-		\ifKV@inputcode@noattach
-		\else
-			\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}
-		\fi
-	}
+	\viewonly{%
+		\ifKV@inputcode@noattach%
+		\else%
+			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}\par}%
+		\fi%
+	}%
 	\def\inputcode@zz{\inputminted[}
 	\expandafter\inputcode@zz\XKV@rm,fontsize=\inputcode@fontsize,baselinestretch=\inputcode@baselinestretch,obeytabs=\inputcode@obeytabs,linenos=\inputcode@linenos]{#2}{\listingspath#3}
 \endgroup
@@ -388,8 +388,8 @@
 	\@ifundefined{inlinecode@caption}{}{
 		\caption{\inlinecode@caption}
 	}
-	\viewonly{
-		\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir\inlinecode@filename}{\opensourcecode}}
+	\viewonly{%
+		{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir\inlinecode@filename}{\opensourcecode}}\par}%
 	}
 	\@ifundefined{inlinecode@label}{}{
 		\label{\inlinecode@label}
