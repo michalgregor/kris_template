@@ -1,25 +1,15 @@
-\ProvidesFile{iso.bbx}[2017/09/19 v1.0 biblatex bibliography style]
+\ProvidesFile{iso.bbx}[2017/09/19 v1.0 biblatex ISO style]
 \RequireBibliographyStyle{standard}
-\DefineBibliographyStrings{english}{%
-  url = {URL},
-  urlseen={cit.},
-}
 
-%\DeclareLanguageMapping{english}{english-iso}
-
+% options
 \ExecuteBibliographyOptions{%
-  %sorting=nyt
-  ,maxnames=5
-  ,minnames=3
-  ,citetracker=true
-  %,babel=other
-  %,method=authoryear
   ,urldate=iso8601
-  ,firstinits=true
   ,maxnames=3
   ,minnames=1
 }
 
+% strings necessary for displaying
+% the supervisor field in theses
 \NewBibliographyString{bysupervisor}
 \DefineBibliographyStrings{english}{%
    bysupervisor = {Thesis supervisor}
@@ -28,12 +18,11 @@
    bysupervisor = {Ved\'{u}ci pr\'{a}ce}
 }
 
+% macro that mark the beginning and end of every entry
 \newbibmacro*{begentry}{}
 \newbibmacro*{finentry}{\finentry\adddot}
 
-\newcommand\mainsstring[1]{\bibsstring[\mainlang]{#1}}
-\newcommand\mainlstring[1]{\biblstring[\mainlang]{#1}}
-
+% punctuation and delimiters
 \newcommand*\addontitlepunct{\adddot\space}
 \renewcommand*\subtitlepunct{\addspcolon\space}
 \renewcommand\andmoredelim{}
@@ -41,186 +30,9 @@
 \renewcommand\finalnamedelim{\multinamedelim}
 \renewcommand\andothersdelim{\addspace}
 \renewcommand\intitlepunct{\addspace}
-
-% Thanks Moewew for sugesting this. Make uppercase names only in biblipgraphy.
-% Default name format is ALL-CAPS
-% use something like 
-% \let\lastnameformat=\textsc
-% to change this
-\newcommand\lastnameformat[1]{\MakeUppercase{#1}}
-\AtBeginBibliography{%
-\renewcommand\mkbibnamelast[1]{\lastnameformat{#1}}%
-\renewcommand\mkbibnamefamily[1]{\lastnameformat{#1}}
-}
-
-% The bibliography environment.
-\defbibenvironment{bibliography}
-  {\list%
-     {\MethodFormat}%
-     {}
-     \renewcommand*{\makelabel}[1]{\hss##1}
-  }%
-  {\endlist}%
-  {\item}%
-
-\DeclareFieldFormat*{title}{#1}
-\DeclareFieldFormat*{subtitle}{#1}
-\DeclareFieldFormat*{chapter}{#1}
-\DeclareFieldFormat*{pagetotal}{#1}
-\DeclareFieldFormat*{volume}{\bibsstring{jourvol}\space#1}
-\DeclareFieldFormat*{number}{\bibsstring{number}\space#1}
-\DeclareFieldFormat*{emphatize}{\emph{#1}}
-\DeclareFieldFormat*{edition}{%
-  \ifnumeral{#1}%
-  {\mkbibordedition{#1}\addnbspace\bibsstring{edition}}%
-    {\MakeCapital{#1}}
-}
-\DeclareFieldFormat*{url}{\url{#1}}
-\DeclareFieldFormat*{doi}{\url{http://dx.doi.org/#1}}
-
-\DeclareFieldFormat{sbrackets}{[#1]}
-\DeclareFieldFormat{rbrackets}{(#1)}
-\DeclareFieldFormat{abrackets}{$\langle$#1$\rangle$}
-
-%We must handle more than one isbn and issn
-\DeclareFieldFormat{isbn}{%
-\renewcommand*{\do}[1]{\printtext{ISBN}\addnbspace#1}%
-\docsvfield{isbn}}%
-
-\DeclareFieldFormat{issn}{%
-\renewcommand*{\do}[1]{\printtext{ISSN}\addnbspace#1}%
-\docsvfield{issn}}%
-
 \def\addhyphen{\printtext{-}}%
-\DeclareFieldFormat{urldate}{\printfield{urlyear}\addhyphen\printfield{urlmonth}\addhyphen\printfield{urlday}}%
+\protected\def\blx@imc@addspcolon{\unspace\blx@addsppunct{colon}}%
 
-\DeclareFieldFormat{type}{\ifbibstring{#1}{\bibstring{#1}}{\MakeCapital{#1}}}
-
-\DeclareNameAlias{default}{last-first}
-\DeclareNameAlias{supervisor}{first-last}
-
-\newbibmacro*{pubinfo}{%
-  \let\krbbl@onepresent\relax%
-  \iflistundef{location}{}{\printlist{location}\def\krbbl@onepresent{}}%
-  \iflistundef{publisher}{}{%
-    \def\krbbl@onepresent{}%
-    \iflistundef{location}{}{\setunit{\addcolon\addspace}}%
-    \printlist{publisher}%
-  }%
-  \newunit%
-  \@ifundefined{krbbl@onepresent}{}{\setunit{\addcomma\addspace}}%
-  \usebibmacro{date}%
-}%
-
-\newbibmacro*{vol_num}{%
-  \setunit*{\addcomma\addspace}%
-  \printfield{volume}%
-  \setunit*{\addcomma\addspace}%
-  \printfield{number}%
-}%
-
-\newbibmacro*{authorship:primary}{\printnames{author}}%
-
-\newbibmacro*{authorship:secondary}{%
-  \bgroup%
-  \renewcommand{\lastnameformat}{}%
-  \usebibmacro{editor}%
-  \newunit%
-  \ifnameundef{translator}{}{%
-    \bibsstring{translator} \printnames{translator}%
-  }%
-  \egroup%
-  \usebibmacro{year-label}%
-}%
-
-\newbibmacro*{inbook_loc}{%
-  \iffieldundef{chapter}{}{
-    \bibsstring{chapter}
-    \printfield{chapter}
-    \newunit
-    \setunit{\addcomma\addspace}
-  }
-  \printfield{pages}
-}%
-
-\renewbibmacro*{editor}{%
-  \ifnameundef{editor}%
-  {}%
-  {\usebibmacro{editorrole} \addspace \printnames{editor}%
-  }%
-}%
-
-\newbibmacro*{editorrole}{%
-  \iffieldundef{editortype}{\bibsstring{editor}}{\bibsstring{\thefield{editortype}}}%
-}%
-
-\newbibmacro{comment+link}[1]{%
-  \printtext{#1}\setunit*{\addcolon\addspace}%\printtext[abrackets]{#2}%
-}%
-
-\newbibmacro*{online-test}[2]{%
-  \ifboolexpr{%
-    test {\iffieldundef{url}}%
-    and%
-    test {\iffieldundef{eprint}}%
-    and%
-    test {\iffieldundef{doi}}%
-  }%
-  {#1}%
-  {#2}%
-}%
-
-\newbibmacro{print-online}{%
-  \usebibmacro{online-test}{}{%
-    \MakeUppercase{\bibsstring{url}}\addcolon\addspace%
-  \printtext[abrackets]{%
-      \iffieldundef{url}{%
-        \printfield{doi}%
-        \printfield{eprint}%
-      }%
-      {\printfield{url}}%
-    }%
-    \usebibmacro{urldate}%
-  }%
-}%
-
-\newbibmacro{availability}{%
-  % test for url, eprint and doi fields
-  \usebibmacro{online-test}%
-  {}%
-  {\iffieldundef{howpublished}% when some of them is used
-    {}%
-    {\printtext[sbrackets]{\printfield{howpublished}}}%
-  }%
-}%
-
-\newbibmacro*{date}{%
-  \iffieldundef{date}%
-  {\printfield{year}}%
-  {\printfield{date}}%
-}%
-
-\newbibmacro*{urldate}{%
-  \iffieldundef{urlyear}{}%
-  {\addspace\printtext[rbrackets]{%
-    %\printtext{cit.}%
-    \mainsstring{urlseen}%
-    \addspace%
-    \printurldate%
-  }}%
-}%
-
-% we can reset this macro in author year style so we don't print year twice in 
-% reference
-\newbibmacro{journal-year}{\printfield{year}}
-
-\newbibmacro{pagecount}{%
-\iffieldundef{pagetotal}{}%
-{\printfield{pagetotal}\usebibmacro{loc:pages}}%
-}%
-
-% \makeatletter
-% see biblatex2.sty for these macros
 \blx@regimcs{% let biblatex know the new macros
   \addspsemicolon \addspcolon \addcolon \addspcomma }%
 \def\blx@addsppunct#1{% <---- new name for spaced punctuation
@@ -238,8 +50,203 @@
   \fi%
   \csuse{blx@pq@#1}}%
 
-% declare new punctation
-\protected\def\blx@imc@addspcolon{\unspace\blx@addsppunct{colon}}%
+% last names are shown in capitals...
+\newcommand\lastnameformat[1]{\MakeUppercase{#1}}
+% ... but only in the actual bibliography
+\AtBeginBibliography{%
+\renewcommand\mkbibnamelast[1]{\lastnameformat{#1}}%
+\renewcommand\mkbibnamefamily[1]{\lastnameformat{#1}}
+}
+
+% The bibliography environment.
+\defbibenvironment{bibliography}
+  {\list%
+     {\MethodFormat}%
+     {}
+     \renewcommand*{\makelabel}[1]{\hss##1}
+  }%
+  {\endlist}%
+  {\item}%
+
+% field formats
+\DeclareFieldFormat*{title}{#1}
+\DeclareFieldFormat*{subtitle}{#1}
+\DeclareFieldFormat*{chapter}{#1}
+\DeclareFieldFormat*{pagetotal}{#1}
+\DeclareFieldFormat*{number}{\bibsstring{number}\space#1}
+\DeclareFieldFormat*{emphatize}{\emph{#1}}
+\DeclareFieldFormat{type}{\ifbibstring{#1}{\bibstring{#1}}{\MakeCapital{#1}}}
+\DeclareFieldFormat*{edition}{%
+  \ifnumeral{#1}%
+  {\mkbibordedition{#1}\addnbspace\bibsstring{edition}}%
+  {\MakeCapital{#1}}
+}
+\DeclareFieldFormat{journaltitle}{#1}
+\DeclareFieldFormat{booktitle}{#1}
+\DeclareFieldFormat{maintitle}{#1}
+\DeclareFieldFormat{journalsubtitle}{#1}
+\DeclareFieldFormat{booksubtitle}{#1}
+\DeclareFieldFormat{mainsubtitle}{#1}
+
+% url formats
+\DeclareFieldFormat*{url}{\url{#1}}
+\DeclareFieldFormat*{doi}{\url{http://dx.doi.org/#1}}
+\DeclareFieldFormat{urldate}{\printfield{urlyear}\addhyphen\printfield{urlmonth}\addhyphen\printfield{urlday}}%
+
+% bracket formats
+\DeclareFieldFormat{sbrackets}{[#1]}
+\DeclareFieldFormat{rbrackets}{(#1)}
+\DeclareFieldFormat{abrackets}{$\langle$#1$\rangle$}
+
+% ISBN field with support for multiple entries.
+\DeclareFieldFormat{isbn}{%
+\renewcommand*{\do}[1]{\printtext{ISBN}\addnbspace#1}%
+\docsvfield{isbn}}%
+
+% ISSN field with support for multiple entries.
+\DeclareFieldFormat{issn}{%
+\renewcommand*{\do}[1]{\printtext{ISSN}\addnbspace#1}%
+\docsvfield{issn}}%
+
+% A name format which uses the family name and the initial of the given name.
+\DeclareNameFormat{family-giveninits}{%
+	\usebibmacro{name:family-given}
+      {\namepartfamily}
+      {\namepartgiveni}
+      {\namepartprefix}
+      {\namepartsuffix}
+  \usebibmacro{name:andothers}
+}
+
+% By default, we use the family name, followed
+% by the initials of the given name.
+\DeclareNameAlias{default}{family-giveninits}
+% For supervisors, we instead use the full given name and the full family name.
+\DeclareNameAlias{supervisor}{given-family}
+
+% The date of publication.
+\newbibmacro*{date}{%
+  \iffieldundef{date}%
+  {\printfield{year}}%
+  {\printfield{date}}%
+}%
+
+% The basic info about the publication.
+\newbibmacro*{pubinfo}{%
+  \let\krbbl@onepresent\relax%
+  \iflistundef{location}{}{\printlist{location}\def\krbbl@onepresent{}}%
+  \iflistundef{publisher}{}{%
+    \def\krbbl@onepresent{}%
+    \iflistundef{location}{}{\setunit{\addcolon\addspace}}%
+    \printlist{publisher}%
+  }%
+  \newunit%
+  \@ifundefined{krbbl@onepresent}{}{\setunit{\addcomma\addspace}}%
+  \usebibmacro{date}%
+}%
+
+% Info about volume and number. Arg #1 should be either
+% volume, or jourvol, depending on the type of entry.
+\newbibmacro*{vol_num}[1]{%
+  \setunit*{\addcomma\addspace}%
+  \iffieldundef{volume}{}{\bibsstring{#1}\space\printfield{volume}}%
+  \setunit*{\addcomma\addspace}%
+  \printfield{number}%
+}%
+
+% Primary authorship.
+\newbibmacro*{authorship:primary}{\printnames{author}}%
+
+% Secondary authorship.
+\newbibmacro*{authorship:secondary}{%
+  \bgroup%
+  \renewcommand{\lastnameformat}{}%
+  \usebibmacro{editor}%
+  \newunit%
+  \ifnameundef{translator}{}{%
+    \bibsstring{translator} \printnames{translator}%
+  }%
+  \egroup%
+}%
+
+% Location of the cited part in the book.
+\newbibmacro*{inbook_loc}{%
+  \iffieldundef{chapter}{}{
+    \bibsstring{chapter}
+    \printfield{chapter}
+    \newunit
+    \setunit{\addcomma\addspace}
+  }
+  \printfield{pages}
+}%
+
+% A macro that either prints the localized editor string, or else
+% the editortype field if it is specified.
+\newbibmacro*{editorrole}{%
+  \iffieldundef{editortype}{\bibsstring{editor}}{\bibsstring{\thefield{editortype}}}%
+}%
+
+% Name(s) of the editor(s).
+\renewbibmacro*{editor}{%
+  \ifnameundef{editor}{}%
+  {\usebibmacro{editorrole} \addspace \printnames{editor}%
+  }%
+}%
+
+% Expands to #1 if none of url, eprint and doi are defined and to to #2 otherwise.
+\newbibmacro*{online-test}[2]{%
+  \ifboolexpr{%
+    test {\iffieldundef{url}}%
+    and%
+    test {\iffieldundef{eprint}}%
+    and%
+    test {\iffieldundef{doi}}%
+  }%
+  {#1}%
+  {#2}%
+}%
+
+% Date of citation for online sources.
+\newbibmacro*{urldate}{%
+  \iffieldundef{urlyear}{}%
+  {\addspace\printtext[rbrackets]{%
+    \bibsstring{cited}%
+    \addspace%
+    \printurldate%
+  }}%
+}%
+
+% Displays the information about URL, citation date, etc.
+\newbibmacro{print-online}{%
+  \usebibmacro{online-test}{}{%
+    \MakeUppercase{\bibsstring{url}}\addcolon\addspace%
+  \printtext[abrackets]{%
+      \iffieldundef{url}{%
+        \printfield{doi}%
+        \printfield{eprint}%
+      }%
+      {\printfield{url}}%
+    }%
+    \usebibmacro{urldate}%
+  }%
+}%
+
+% Displays the howpublished field.
+\newbibmacro{availability}{%
+  % test for url, eprint and doi fields
+  \usebibmacro{online-test}%
+  {}%
+  {\iffieldundef{howpublished}% when some of them is used
+    {}%
+    {\printtext[sbrackets]{\printfield{howpublished}}}%
+  }%
+}%
+
+% Number of pages.
+\newbibmacro{pagecount}{%
+\iffieldundef{pagetotal}{}%
+{\printfield{pagetotal}\addnbspace\bibsstring{pages}}%
+}%
 
 % a macro used to print tile, subtitle and titleaddon of a certain type
 \newbibmacro{titles}[2]{%
@@ -334,28 +341,17 @@
   }%
 }%
 
+% Displays the supervisor field for theses.
 \newbibmacro*{thesissupervisor}{%
   \bgroup%
   \ifnameundef{supervisor}
     {}
     {\renewcommand{\lastnameformat}{}%
-     \printtext{\mainlstring{bysupervisor}}%
+     \printtext{\biblstring{bysupervisor}}%
      \addspace%
      \printnames{supervisor}}
   \egroup%
 }
-
-\DeclareFieldFormat{journaltitle}{#1}
-\DeclareFieldFormat{booktitle}{#1}
-\DeclareFieldFormat{maintitle}{#1}
-\DeclareFieldFormat{journalsubtitle}{#1}
-\DeclareFieldFormat{booksubtitle}{#1}
-\DeclareFieldFormat{mainsubtitle}{#1}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Localisation macros
-\newbibmacro{loc:pages}{\addnbspace\mainsstring{pages}}%\printtext{s}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % book
 \DeclareBibliographyDriver{book}{%
@@ -381,7 +377,7 @@
 \printfield{type}%
 \newunit%
 \setunit{\addspace}%
-\printfield{number}%
+\usebibmacro{vol_num}{volume}%
 \newunit%
 \setunit{\addcomma\addspace}%
 \printlist{institution}%
@@ -415,7 +411,7 @@
 \setunit{\labelnamepunct}\newblock%
 \usebibmacro{authorship:secondary}%
 \newunit\newblock%
-\usebibmacro{vol_num}%
+\usebibmacro{vol_num}{jourvol}%
 \newunit%
 \setunit{\addcomma\addspace}%
 \usebibmacro{inbook_loc}%
@@ -453,7 +449,7 @@
 \newunit\newblock%
 \usebibmacro{authorship:secondary}%
 \newunit\newblock%
-\usebibmacro{vol_num}%
+\usebibmacro{vol_num}{jourvol}%
 \newunit%
 \setunit{\addcomma\addspace}%
 \usebibmacro{inbook_loc}%
