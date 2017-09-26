@@ -274,6 +274,8 @@
 %                       LISTINGS
 %-----------------------------------------------------------
 
+\usepackage{xstring}
+
 \@ifundefined{auxfiles}
 {
 	\newcommand{\mintedoutputdir}{}
@@ -291,7 +293,7 @@
 }
 
 \newcommand{\opensourcecode}{[open source code]}
-\newcommand{\opensourcecodestyle}[1]{\raggedleft\vspace{-0.5em}\scriptsize#1\vspace{-0.5em}}
+\newcommand{\opensourcecodestyle}[1]{\raggedleft\vspace{-1em}\scriptsize#1\vspace{-1em}}
 
 %\inputcode: arg1 - language, arg2 - file
 \define@boolkey{inputcode}{noattach}{}
@@ -336,6 +338,7 @@
 \define@boolkey{inlinecode}{obeytabs}{\def\inlinecode@obeytabs{#1}}
 \define@key{inlinecode}{fontsize}{\def\inlinecode@fontsize{#1}}
 \define@key{inlinecode}{baselinestretch}{\def\inlinecode@baselinestretch{#1}}
+\define@key{inlinecode}{ext}{\def\inlinecode@ext{#1}}
 
 \setkeys{inlinecode}{noattach=false,linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
 
@@ -355,6 +358,11 @@
 	\end{minted}
 	\end{center}\vspace{-1em}}
 
+\newcommand{\uniza@DetermineExt}[1]{%
+	\def\inlinecode@ext{txt}%
+	\IfStrEq{#1}{python}{\def\inlinecode@ext{py}}{}%
+}%
+
 \newenvironment{inlinecode}[2][]{
 	\begingroup
 	\VerbatimEnvironment
@@ -373,7 +381,10 @@
 	\begin{noattach@inlinecode}{#1}{#2}%
 	}{
 	\stepcounter{inlinecode@filecounter}
-	\def\inlinecode@filename{\jobname-code-\theinlinecode@filecounter.txt}
+	\@ifundefined{inlinecode@ext}{%
+		\uniza@DetermineExt{#2}%
+	}{}%
+	\def\inlinecode@filename{\jobname-code-\theinlinecode@filecounter.\inlinecode@ext}
     \let\FVB@VerbatimOut\minted@FVB@VerbatimOut
     \let\FVE@VerbatimOut\minted@FVE@VerbatimOut
 	\begin{VerbatimOut}{\inlinecode@filename}%
