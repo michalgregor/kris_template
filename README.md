@@ -8,6 +8,8 @@ možné [nájsť tu](https://www.dropbox.com/s/vn83egme6v8f54j/LaTeX_template.pd
 
 # Ako skompilovať
 
+## Latexmk
+
 Kompilácia dokumentu sa dá realizovať štandardne. Môžeme však odporúčať použitie
 nástroja latexmk – v tom prípade sa dajú použiť príkazy v nasledujúcom tvare:
 ```
@@ -19,6 +21,12 @@ Prvý príkaz vytvorí pomocný adresár auxfiles (ak ešte neexistuje). Do toht
 adresára sa uložia pomocné súbory aj výsledný PDF súbor – inak by sa uložili
 medzi zdrojové súbory, čo by bolo značne neprehľadné.
 
+Ako vidno, namiesto názvu tex súboru zadávame ``\def\auxfiles{}\input{%.tex}``,
+t.j. definujeme pomocné makro ``auxfiles``, ktoré indikuje, že pomocné a
+výstupné súbory sa ukladajú do pomocného adresára auxfiles.
+
+## TexStudio + Latexmk
+
 Ak sa kompilácia spúšťa z prostredia TeXStudio, dá sa tiež použiť latexmk.
 Príkaz bude vyzerať nasledovne:
 ```
@@ -27,6 +35,22 @@ latexmk -silent -bibtex -outdir=auxfiles -pdf -pdflatex="pdflatex -synctex=1 --s
 Treba ho vložiť do políčka Latexmk, ku ktorému sa pristupuje cez Options->Configure TeXstudio->Commands. Následne treba v záložke Build zvoliť ako Default Compiler tiež Latexmk.
 
 Okrem toho je dobré v tej istej záložke zvoliť možnosť Show Advanced Options a v dolnej časti okna nastaviť cesty Log File, PDF File a Commands na ``auxfiles``.
+
+Vo Windows-ovej verzii sa namiesto ``latexmk`` zadá ``latexmk.exe``.
+
+## TexStudio + pdflatex
+
+Ak inštalácia LaTeX-u nedisponuje nástrojom latexmk, dá sa namiesto neho použiť
+aj priamo pdflatex. V tom prípade sa dá TexStudio konfigurovať nasledovne:
+```
+pdflatex -shell-escape -synctex=1 -output-directory auxfiles -interaction=nonstopmode "\def\auxfiles{}\input{%.tex}"
+```
+
+Podobne ako v predchádzajúcom prípade, na operačnom systéme Windows sa
+namiest ``pdflatex`` zadá ``pdflatex.exe``.
+
+Okrem tohto nastavenia je potrebné v záložke Build zvoliť ako bibliografický
+nástroj (nastavenie Default Bibliography Tool) Biber.
 
 ## Balíček encxvlna
 
