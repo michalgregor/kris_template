@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{kris_utils}[2017/09/20 KRIS Utils Package]
+\ProvidesPackage{uniza_utils}[2017/09/20 KRIS Utils Package]
 
 \newif\if@biblatex
 \DeclareOption{biblatex}{
@@ -19,6 +19,11 @@
 \newif\if@withbeamer\@withbeamerfalse
 \DeclareOption{withbeamer}{
   \@withbeamertrue
+}
+
+\newif\if@nominted\@nomintedfalse
+\DeclareOption{nominted}{
+  \@nomintedtrue
 }
 
 \ProcessOptions\relax
@@ -249,6 +254,9 @@
 % wideslash
 \newcommand\wideslash[2]{{}^{#1}/_{#2}}
 
+% math define equals
+\newcommand{\defeq}{=_\text{def}}
+
 %-----------------------------------------------------------
 %        A macro to detect if arg output is empty
 %-----------------------------------------------------------  
@@ -273,15 +281,18 @@
 %-----------------------------------------------------------
 %                       LISTINGS
 %-----------------------------------------------------------
-
 \usepackage{xstring}
+
+% listing name for referencing
+\newcommand{\listingname}{Lst.}
+  
+% localization
+\addtolang{slovak}{\renewcommand{\opensourcecode}{[otvoriť zdrojový kód]}\renewcommand{\listingname}{Lst.}}
 
 \@ifundefined{auxfiles}
 {
 	\newcommand{\mintedoutputdir}{}
 	\newcommand{\listingspath}{}
-	
-	\RequirePackage[cache]{minted}
 } {
 	\ifargoutempty{\auxfiles}{
 		\newcommand{\mintedoutputdir}{auxfiles/}
@@ -289,7 +300,6 @@
 		\newcommand{\mintedoutputdir}{\auxfiles}
 	}
 	\newcommand{\listingspath}{}
-	\RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
 }
 
 \newcommand{\opensourcecode}{[open source code]}
@@ -297,32 +307,14 @@
 
 %\inputcode: arg1 - language, arg2 - file
 \define@boolkey{inputcode}{noattach}{}
-\define@boolkey{inputcode}{linenos}{\def\inputcode@linenos{#1}}
-\define@boolkey{inputcode}{obeytabs}{\def\inputcode@obeytabs{#1}}
+\define@key{inputcode}{linenos}{\def\inputcode@linenos{#1}}
+\define@key{inputcode}{obeytabs}{\def\inputcode@obeytabs{#1}}
 \define@key{inputcode}{fontsize}{\def\inputcode@fontsize{#1}}
 \define@key{inputcode}{baselinestretch}{\def\inputcode@baselinestretch{#1}}
+\define@key{inputcode}{firstline}{\def\inputcode@firstline{#1}}
+\define@key{inputcode}{lastline}{\def\inputcode@lastline{#1}}
 
 \setkeys{inputcode}{linenos=true,noattach=false,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
-
-\newcommand{\inputcode}[3][]{
-\begingroup
-\setkeys*{inputcode}{#1}
-	\viewonly{%
-		\ifKV@inputcode@noattach%
-		\else%
-			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}\par}%
-		\fi%
-	}%
-	\def\inputcode@zz{\inputminted[}
-	\expandafter\inputcode@zz\XKV@rm,fontsize=\inputcode@fontsize,baselinestretch=\inputcode@baselinestretch,obeytabs=\inputcode@obeytabs,linenos=\inputcode@linenos]{#2}{\listingspath#3}
-\endgroup
-}
-
-% code environment
-\newenvironment{code}{%
-\renewcommand{\discretionary}[3]{##1}%
-\begin{center}\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}\pagebreak[3]}%
-{\end{center}\vspace{-1em}}%
 
 % if encxvlna is used, we need to turn it off for inlinecode
 % using \mubytein=0; if enctex is not enabled, we define mubytein as a counter to avoid errors
@@ -334,13 +326,218 @@
 \define@boolkey{inlinecode}{noattach}{}
 \define@key{inlinecode}{caption}{\def\inlinecode@caption{#1}}
 \define@key{inlinecode}{label}{\def\inlinecode@label{#1}}
-\define@boolkey{inlinecode}{linenos}{\def\inlinecode@linenos{#1}}
-\define@boolkey{inlinecode}{obeytabs}{\def\inlinecode@obeytabs{#1}}
+\define@key{inlinecode}{linenos}{\def\inlinecode@linenos{#1}}
+\define@key{inlinecode}{obeytabs}{\def\inlinecode@obeytabs{#1}}
 \define@key{inlinecode}{fontsize}{\def\inlinecode@fontsize{#1}}
 \define@key{inlinecode}{baselinestretch}{\def\inlinecode@baselinestretch{#1}}
 \define@key{inlinecode}{ext}{\def\inlinecode@ext{#1}}
+\define@key{inlinecode}{firstline}{\def\inlinecode@firstline{#1}}
+\define@key{inlinecode}{lastline}{\def\inlinecode@lastline{#1}}
 
 \setkeys{inlinecode}{noattach=false,linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
+
+% code environment
+\newenvironment{code}{%
+\begin{center}\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}\pagebreak[3]}%
+{\end{center}\vspace{-1em}}%
+
+\newcommand{\uniza@DetermineExt}[1]{%
+	\def\inlinecode@ext{txt}%
+	\IfStrEq{#1}{python}{\def\inlinecode@ext{py}}{}%
+}%
+
+% hacks borrowed from minted to deal with utf stuff
+\newcounter{uniza@FancyVerbLineTemp}
+\newcommand{\uniza@write@detok}[1]{%
+  \immediate\write\FV@OutFile{\detokenize{#1}}}
+\newcommand{\uniza@FVB@VerbatimOut}[1]{%
+  \setcounter{uniza@FancyVerbLineTemp}{\value{FancyVerbLine}}%
+  \@bsphack
+  \begingroup
+    \FV@UseKeyValues
+    \FV@DefineWhiteSpace
+    \def\FV@Space{\space}%
+    \FV@DefineTabOut
+    \let\FV@ProcessLine\uniza@write@detok
+    \immediate\openout\FV@OutFile #1\relax
+    \let\FV@FontScanPrep\relax
+    \let\@noligs\relax
+    \FV@Scan
+}
+\newcommand{\uniza@FVE@VerbatimOut}{%
+  \immediate\closeout\FV@OutFile
+	\endgroup\@esphack
+  \setcounter{FancyVerbLine}{\value{uniza@FancyVerbLineTemp}}
+}%
+
+%---------------------------
+% the version without minted
+%---------------------------
+\if@nominted
+
+\RequirePackage{listingsutf8}
+\def\listingcounter{lstlisting}
+\DeclareFloatingEnvironment[name=\listingname,within=none]{listing}
+
+% colors
+\definecolor{lst@comment}{HTML}{408080}
+\definecolor{lst@keyword}{HTML}{008000}
+\definecolor{lst@string}{HTML}{BA2121}
+
+% listings settings
+\lstset{
+    breaklines=true,
+	commentstyle=\color{lst@comment},
+    keywordstyle=\color{lst@keyword},
+	stringstyle=\color{lst@string},
+	inputencoding=utf8/cp1250,
+	numberstyle=\tiny,
+    extendedchars = true,  % Extended ASCII
+    texcl         = false,  % Activate LaTeX commands in comments
+    mathescape    = false,   % Mathematical expressions between $
+    captionpos    = b,     % Caption position
+    showstringspaces=false,
+    basicstyle={\ttfamily},
+    columns=spaceflexible,
+    showlines=true,
+    numbers=left,
+%    literate=%
+%        {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+%        {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+%        {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+%        {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+%        {ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+%        {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1  {Ü}{{\"U}}1
+%        {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+%        {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+%        {ů}{{\r{u}}}1
+%        {Ů}{{\r{U}}}1
+%        {œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+%        {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+%        {€}{{\EUR}}1 {£}{{\pounds}}1
+%        {č}{{\v{c}}}1
+%        {ď}{{\v{d}}}1
+%        {ň}{{\v{n}}}1
+%        {ř}{{\v{r}}}1
+%        {š}{{\v{s}}}1
+%        {ť}{{\v{t}}}1
+%        {ý}{{\'y}}1
+%        {ž}{{\v{z}}}1
+%        {Č}{{\v{C}}}1
+%        {Ď}{{\v{D}}}1
+%        {Ň}{{\v{N}}}1
+%        {Ř}{{\v{R}}}1
+%        {Š}{{\v{S}}}1
+%        {Ť}{{\v{T}}}1
+}
+
+\newcommand{\inputcode}[3][]{
+\vspace{-0.5em}
+\begingroup
+\inputcode@fontsize
+\renewcommand{\baselinestretch}{\inputcode@baselinestretch}
+\setkeys*{inputcode}{#1}
+	\let\XKV@rm@tmp\XKV@rm
+	\ifboolexpr{ bool{\inputcode@linenos} }{
+		\edef\XKV@rm{numbers=left,\XKV@rm@tmp}
+	}{
+		\edef\XKV@rm{numbers=none,\XKV@rm@tmp}
+	}
+	\@ifundefined{inputcode@firstline}{}{
+		\let\XKV@rm@tmp\XKV@rm
+		\edef\XKV@rm{firstline=\inputcode@firstline,firstnumber=\inputcode@firstline,\XKV@rm@tmp}
+	}
+	\@ifundefined{inputcode@lastline}{}{
+		\let\XKV@rm@tmp\XKV@rm
+		\edef\XKV@rm{lastline=\inputcode@lastline,\XKV@rm@tmp}
+	}
+	% language replacement rules; to make
+	% this compatible with the minted version
+	\def\lang{#2}
+	% tex and latex highlighting does not work well
+	\IfStrEq{#2}{latex}{\def\lang{}}{}%
+	\IfStrEq{#2}{tex}{\def\lang{}}{}%
+	% text means no highlighting
+	\IfStrEq{#2}{text}{\def\lang{}}{}%
+	\let\XKV@rm@tmp\XKV@rm
+	\edef\XKV@rm{\XKV@rm@tmp,language=\lang}
+	\viewonly{%
+		\ifKV@inputcode@noattach%
+		\else%
+			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}\par}%
+		\fi%
+	}%
+	\def\inputcode@zz{\lstinputlisting[}
+	\expandafter\inputcode@zz\XKV@rm]{\listingspath#3}
+\endgroup
+\vspace{-0.5em}
+}
+
+\newenvironment{inlinecode}[2][]{
+	\begingroup
+	\VerbatimEnvironment
+	\mubytein=0
+	\shorthandoff{-}
+	\setkeys*{inlinecode}{#1}
+	\let\inlinecode@XKV@rm\XKV@rm
+	\def\inlinecode@SecondArg{#2}
+	% the \if\else\fi construct seems to break code below,
+	% so we use ifundefined with an auxiliary macro instead
+	\let\inlinecode@noattach@aux\relax
+	\ifKV@inlinecode@noattach\else
+		\def\inlinecode@noattach@aux{}
+	\fi
+	\stepcounter{inlinecode@filecounter}
+	\@ifundefined{inlinecode@ext}{%
+		\uniza@DetermineExt{#2}%
+	}{}%
+	\def\inlinecode@filename{\jobname-code-\theinlinecode@filecounter.\inlinecode@ext}
+    \let\FVB@VerbatimOut\uniza@FVB@VerbatimOut
+    \let\FVE@VerbatimOut\uniza@FVE@VerbatimOut
+	\begin{VerbatimOut}{\inlinecode@filename}%
+}{
+	\end{VerbatimOut}
+	\def\inlinecode@zz{\inputcode[}
+	\begin{code}
+	\@ifundefined{inlinecode@caption}{}{
+		\caption{\inlinecode@caption}
+	}
+	\viewonly{%
+		\ifKV@inlinecode@noattach\else
+			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir\inlinecode@filename}{\opensourcecode}}\par}%
+		\fi%
+	}
+	\@ifundefined{inlinecode@label}{}{
+		\label{\inlinecode@label}
+	}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}
+	\end{code} %
+	\endgroup\noindent}
+
+%---------------------------
+% the version with minted
+%---------------------------
+\else % \if@nominted
+
+\RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
+\def\listingcounter{listing}
+\setminted{breaklines=true}
+
+\newcommand{\inputcode}[3][]{
+\begingroup
+\setkeys*{inputcode}{#1}
+	\viewonly{%
+		\ifKV@inputcode@noattach%
+		\else%
+			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}\par}%
+		\fi%
+	}%
+	\@ifundefined{inputcode@firstline}{}{\setminted{firstline=\inputcode@firstline}}
+	\@ifundefined{inputcode@lastline}{}{\setminted{lastline=\inputcode@lastline}}
+	\def\inputcode@zz{\inputminted[}
+	\expandafter\inputcode@zz\XKV@rm,fontsize=\inputcode@fontsize,baselinestretch=\inputcode@baselinestretch,obeytabs=\inputcode@obeytabs,linenos=\inputcode@linenos]{#2}{\listingspath#3}
+\endgroup
+}
 
 \newenvironment{noattach@inlinecode}[2]{
 	\begin{center}
@@ -357,16 +554,12 @@
 {%
 	\end{minted}
 	\end{center}\vspace{-1em}}
-
-\newcommand{\uniza@DetermineExt}[1]{%
-	\def\inlinecode@ext{txt}%
-	\IfStrEq{#1}{python}{\def\inlinecode@ext{py}}{}%
-}%
-
+	
 \newenvironment{inlinecode}[2][]{
 	\begingroup
 	\VerbatimEnvironment
 	\mubytein=0
+	\shorthandoff{-}
   	\renewcommand{\discretionary}[3]{#2}
 	\setkeys*{inlinecode}{#1}
 	\let\inlinecode@XKV@rm\XKV@rm
@@ -394,7 +587,7 @@
 	\end{noattach@inlinecode}
 	}{
 	\end{VerbatimOut}
-	\def\inlinecode@zz{\inputminted[}
+	\def\inlinecode@zz{\inputcode[}
 	\begin{code}
 	\@ifundefined{inlinecode@caption}{}{
 		\caption{\inlinecode@caption}
@@ -409,10 +602,7 @@
 	\end{code}} %
 	\endgroup\noindent}
 
-\newcommand{\listingname}{\listingscaption}
-  
-% localization
-\addtolang{slovak}{\renewcommand{\opensourcecode}{[otvoriť zdrojový kód]}\renewcommand{\listingscaption}{Lst.}}
+\fi % \if@nominted
 
 %-----------------------------------------------------------
 %                       Counters
@@ -420,7 +610,7 @@
 
 % Page count, figure count, ...
 \usepackage{totpages}
-\usepackage[figure,table,page,listing,algocf]{totalcount}
+\usepackage[figure,table,page,\listingcounter,algocf]{totalcount}
 
 %\def\totalalgorithms\totalalgocfs
 %\def\iftotalalgorithms\iftotalalgocfs

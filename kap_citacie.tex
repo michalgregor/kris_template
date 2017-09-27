@@ -3,7 +3,7 @@
 
 Bibliografické informácie pre LaTeX sa ukladajú vo zvláštnom formáte BibTeX -- v súboroch s príponou \texttt{.bib}. Ukážka BibTeX záznamu pre knihu \enquote{Genetické algoritmy a genetické programování} nasleduje tu:
 
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @Book{Hynek2008,
   Title                    = {Genetické algoritmy a genetické programování},
   Author                   = {Josef Hynek},
@@ -63,7 +63,7 @@ V tejto časti uvedieme príklady BibTex položiek pre najčastejšie citované 
 \subsection{Knižná publikácia}
 
 BibTex položka pre knižnú publikáciu môže vyzerať napríklad nasledovne:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @Book{Kikimor2008,
   Title                    = {Mrkva, zemiaky a iná koreňová zelenina},
   Author                   = {Jozef Kikimor and Juraj Holota},
@@ -92,7 +92,7 @@ Počet strán je nepovinná informácia -- v našom odbore je konvenciou ju skô
 \subsubsection{Viac než traja autori}
 
 Ak má publikácia viac než troch autorov, v citácii sa zobrazí len meno prvého autora a skratka \enquote{et al.}. Do poľa \texttt{author} treba zapísať mená všetkých autorov a nechať LaTeX, aby sám vygeneroval citáciu v požadovanom formáte, napr.:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @Book{Koropnik2005,
   Title                    = {Zemiakové delo a iné nástroje},
   Author                   = {Ondrej Koropník and Justín Ďuroška and Albín Chovanec and Filip Hurta},
@@ -133,7 +133,7 @@ Ak z knihy citujeme len nejakú časť -- napr. určitý rozsah strán -- môže
 \subsection{Kapitola v knihe}
 
 Ak sa z knihy cituje jedna konkrétna kapitola, dá sa použiť záznam typu \texttt{inbook} a špecifikovať číslo kapitoly (príp. aj jej názov) v poli \texttt{chapter}, napr.:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @InBook{Kikimor2008IB,
   Title                    = {Mrkva, zemiaky a iná koreňová zelenina},
   
@@ -156,7 +156,7 @@ Ak ide o knihu, kde každá kapitola má iného autora (príp. autorov), cituje 
 \label{sec:inproc}
 
 Na citovanie príspevkov v zborníkoch môžeme použiť záznam typu \texttt{incollection}, napr.:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @Incollection{floreanoEpuck,
   Title                    = {E-puck: A Robotic Platform for Studying the Evolution of Communication},
   Author                   = {Floreano, Dario and Mitri, Sara and Hubert, Julien},
@@ -177,7 +177,7 @@ Ak nejde o zborník v pravom zmysle slova, ale o knižnú publikáciu, kde každ
 \subsection{Článok v časopise}
 
 Na citovanie článku v časopise je možné použiť záznam typu \texttt{article}. Pri časopisových článkoch sa povinne uvádza ISSN. Ak sú k dispozícii, treba uviesť aj informácie o zväzku (\angl{volume}) a čísle (\angl{number}). Záznam môže vyzerať napríklad takto:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @Article{Bhasin2011,
   Title                    = {Asymptotic tracking by a reinforcement learning-based adaptive critic controller},
   Author                   = {Bhasin, Shubhendu and Sharma, Nitin and Patre, Parag and Dixon, Warren},
@@ -198,7 +198,7 @@ a výsledná citácia nasledovne:
 \subsection{Časopis ako celok}
 
 Vo vzácnych prípadoch sa dá citovať aj časopis ako celok -- možno na to použiť záznam typu \texttt{periodical}, napr.:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @Periodical{periodical2014,
   Title                    = {Časopis nových vynálezov},
   Year                     = {2014},
@@ -218,7 +218,7 @@ Výsledná citácia bude vyzerať nasledovne:
 \subsection{Záverečná práca}
 
 Na citáciu záverečnej práce sa dá použiť záznam typu \texttt{thesis}, \texttt{MastersThesis} alebo \texttt{PhDThesis}. Náš citačný štýl medzi týmito typmi záznamov nerozlišuje, preto je možné pre ľubovoľný typ záverečnej práce použiť ktorýkoľvek z nich. Záznam bude v tvare:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @MastersThesis{thesis2015,
   Title                    = {Diaľková preprava záhradných trpaslíkov},
   Author                   = {Matej Kukár},
@@ -238,7 +238,7 @@ Pole \texttt{type} môže mať aj špeciálne hodnoty, napr. hodnoty \texttt{mat
 \subsection{Technická/výskumná správa}
 
 Niekedy je potrebné citovať technické a výskumné správy vydané nejakou inštitúciou -- napr. firmou, výskumným inštitútom alebo vysokou školou. Pri citácii takýchto správ treba uviesť hlavne názov inštitúcie a číslo správy. Dajú sa použiť záznamy typu \texttt{report} alebo \texttt{techreport}, napr.:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @TechReport{Moffaert2013report,
   Title                    = {Efficient Weight Space Search in Multi-Objective Reinforcement Learning},
   Author                   = {Kristof Van Moffaert and Tim Brys and Ann Now{\'e}},
@@ -257,7 +257,7 @@ Výsledná citácia sa zobrazí nasledovne:
 \subsection{Elektronický zdroj}
 
 V prípade elektronických zdrojov môžeme použiť záznam typu \texttt{electronic}. Povinná je položka \texttt{howpublished}, ktorá bližšie špecifikuje typ elektronického zdroja. U nás to bude najčastejšie \enquote{online}, ale môže byť napr. aj \enquote{CD-ROM} a pod. Pre \enquote{online} záznamy je povinné uviesť URL a dátum, kedy bol príslušný zdroj citovaný (v poli \texttt{urldate}). Ako príklad môžeme uviesť:
-\begin{inlinecode}[breaklines]{text}
+\begin{inlinecode}{text}
 @Electronic{latexTables,
   Title                    = {LaTeX/Tables},
   HowPublished             = {online},

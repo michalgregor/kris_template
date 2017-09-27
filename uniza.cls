@@ -1,6 +1,12 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{uniza}[2017/09/20 UNIZA LaTeX Class]
 
+\newif\if@nominted\@nomintedfalse
+\DeclareOption{nominted}{
+  \@nomintedtrue
+  \PassOptionsToPackage{\CurrentOption}{uniza_utils}
+}
+
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions \relax
 

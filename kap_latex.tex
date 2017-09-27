@@ -31,7 +31,7 @@ Ukážka toho, ako sa jednotlivé typy kapitol zobrazujú, nasleduje nižšie.
 \subsection{Odkazy na kapitoly}
 
 Aby sa na kapitoly dalo odkazovať, treba pod nadpis kapitoly vložiť návesť na ňu pomocou makra \texttt{label}, napr.:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \section{Členenie textu}
 \label{sec:clenenie_textu}
 \end{inlinecode}
@@ -39,7 +39,7 @@ Aby sa na kapitoly dalo odkazovať, treba pod nadpis kapitoly vložiť návesť 
 Časť \texttt{sec:} nie je povinná -- je však dobrým zvykom návestia označovať podľa toho, na čo odkazujú: napr. \texttt{sec} pre kapitoly, \texttt{fig} pre obrázky, \texttt{eq} pre rovnice a pod.
 
 Samotné odkazy sa potom generujú pomocou makra \texttt{ref} takto:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \ref{sec:clenenie_textu}
 \end{inlinecode}
 
@@ -48,14 +48,14 @@ Odkaz na kapitolu o členení textu by teda vyzeral nasledovne: \ref{sec:cleneni
 \subsection{Skrátené názvy}
 
 V prípade, že názov kapitoly alebo inej sekcie textu je príliš dlhý na to, aby sa korektne zobrazoval povedzme v záhlaví strany alebo v obsahu práce, dá sa okrem hlavného názvu špecifikovať aj skrátený názov, ktorý sa použije práve na tieto účely. Špecifikuje sa pomocou nepovinného parametra, ktorý sa uzatvorí do hranatých zátvoriek, napr.:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \chapter[Skrátený nadpis kapitoly]{Nepríjemne dlhý a ťažko zobraziteľný nadpis kapitoly, ktorý sa naozaj nikam nezmestí bez toho, aby sa mu vyhradila osobitná strana}
 \end{inlinecode}
 
 \section{Vkladanie obrázkov}
 
 Vkladanie obrázkov sa dá realizovať pomocou prostredia \texttt{figure} nasledovne:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \begin{figure}
 \centering
 \includegraphics[width=5cm]{logo}
@@ -74,7 +74,7 @@ Výsledok ilustruje \figurename~\ref{fig:obrazok}. Pozícia obrázka sa určí a
 \end{figure}
 
 Odkazovanie sa na obrázky sa realizuje pomocou značky uvedenej vo vnútri makra \texttt{label}. V tomto prípade ide o značku \texttt{fig:obrazok}. Odkaz na obrázok zapíšeme teda ako:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \figurename~\ref{fig:obrazok}
 \end{inlinecode}
 kde makro {\textbackslash}figurename vracia názov popiskov obrázkov v aktuálnom jazyku (u nás je to \figurename) a {\textbackslash}ref{fig:obrazok} generuje samotný odkaz. Vlnovka \textasciitilde\ označuje nezalomiteľnú medzeru.
@@ -82,7 +82,7 @@ kde makro {\textbackslash}figurename vracia názov popiskov obrázkov v aktuáln
 \subsection{Viacero obrázkov vedľa seba}
 
 Niekedy -- ak jednotlivé obrázky nezaberajú priveľa miesta -- je užitočné uložiť ich aj viacero vedľa seba. Dá sa to docieliť pomocou prostredia \texttt{minipage} napríklad nasledovne:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \begin{figure}
 \centering
 \begin{minipage}[b]{0.58\textwidth}
@@ -291,7 +291,7 @@ kde $x$ je premenná a $\alpha$ je konštanta.
 \subsection{Odseky pokračujúce za rovnicou}
 
 Všimnite si, že text nasledujúci za rovnicou nie je odsadený. Nejde totiž o nový odsek, ale o pokračovanie predošlého odseku -- dokonca o pokračovanie tej istej vety. Ak má LaTeX text interpretovať takto, nesmie sa za prostredím equation vynechať nový riadok, t.j. kód bude vyzerať takto:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 Rovnice, ktoré sa majú zobrazovať osobitne, mimo riadku a majú byť číslované, sa dajú vložiť pomocou prostredia \texttt{equation}. Vyzerajú nasledovne:
 \begin{equation}
 x^2 + \alpha,
@@ -318,7 +318,7 @@ y = x^2.
 \end{gather}
 
 Kód potrebný na ich zobrazenie vyzerá takto:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \begin{gather}
 x = 2a - 3b \\
 y = x^2.
@@ -332,7 +332,7 @@ y &= x^2.
 \end{align}
 
 Kód potrebný na ich zobrazenie vyzerá nasledovne:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \begin{align}
 x &= 2a - 3b \\
 y &= x^2.
@@ -344,7 +344,7 @@ Alternatívne sa dajú použiť prostredia \texttt{gathered} a \texttt{aligned} 
 \section{Úvodzovky}
 
 Vzhľadom na to, že v každom jazyku sa úvodzovky zapisujú trochu inak, obsahuje LaTeX makro \texttt{enquote} (z balíčka \texttt{csquotes}), ktoré správnu formu úvodzoviek pre daný jazyk generuje. Text, ktorý má byť v úvodzovkách sa teda obalí do makra \texttt{enquote} takto:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \enquote{Text v úvodzovkách}
 \end{inlinecode}
 
@@ -359,7 +359,7 @@ Mnohé LaTeX-ové editory majú pre \texttt{enquote} vstavanú podporu, takže p
 \subsection{Číslované zoznamy}
 
 Číslované zoznamy sa vytvárajú pomocou prostredia \texttt{enumerate}, napr.:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \begin{enumerate}
 \item položka,
 \item položka,
@@ -386,7 +386,7 @@ Zoznam sa zobrazí nasledovne:
 \subsection{Viacstĺpcové zoznamy}
 
 V prípade, že zoznam obsahuje viacero položiek, ktoré v horizontálnom smere nezaberajú veľa miesta, môže byť lepšie usporiadať ich do viacerých stĺpcov. V tom prípade sa dá celý zoznam obaliť do prostredia \texttt{multicols} nasledujúcim spôsobom:
-\begin{inlinecode}[breaklines=True]{latex}
+\begin{inlinecode}{latex}
 \begin{multicols}{2}
 \begin{itemize}
 \item položka,
@@ -500,16 +500,16 @@ Naopak pre prípad dlhších zdrojových kódov, ktoré sú uložené v osobitn�
 \begin{Verbatim}
 \begin{code}
 \caption{Ukážka dlhšieho zdrojového kódu.}
-\inputcode[breaklines=True,firstline=5,lastline=39]{python}
+\inputcode[firstline=5,lastline=39]{python}
 	{listings/delta_rule.py}
 \label{lst:delta_rule}
 \end{code}
 \end{Verbatim}
 
-Parametre uvedené v hranatých zátvorkách sú znovu nepovinné. Parameter \texttt{breaklines=True} zapína automatické zalamovanie riadkov. Parametre \texttt{firstline} a \texttt{lastline} určujú, aký rozsah riadkov sa má zobraziť. Ukážka výsledku je na \listingname~\ref{lst:delta_rule}.
+Parametre uvedené v hranatých zátvorkách sú znovu nepovinné -- \texttt{firstline} a \texttt{lastline} určujú, aký rozsah riadkov sa má zobraziť. Ukážka výsledku je na \listingname~\ref{lst:delta_rule}.
 \begin{code}
 \caption{Ukážka dlhšieho zdrojového kódu.}
-\inputcode[breaklines=True,firstline=5,lastline=38]{python}
+\inputcode[firstline=5,lastline=38]{python}
 	{listings/delta_rule.py}
 \label{lst:delta_rule}
 \end{code}
