@@ -189,7 +189,7 @@
 	
 	\defbibheading{unchapter}{\unchapter{#1}}
 \else
-%	\usepackage[square,comma,sort&compress,numbers]{natbib}
+	\usepackage[square,comma,sort&compress,numbers]{natbib}
 \fi
 
 %-----------------------------------------------------------
@@ -256,6 +256,10 @@
 
 % math define equals
 \newcommand{\defeq}{=_\text{def}}
+
+% closed interval macros
+\newcommand{\bint}{[}
+\newcommand{\eint}{]}
 
 %-----------------------------------------------------------
 %        A macro to detect if arg output is empty
@@ -782,9 +786,6 @@
 \newlist{inlinelist}{enumerate*}{1}
 \setlist*[inlinelist,1]{label=\itshape(\alph*)}
 
-\setitemize{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
-\setenumerate{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
-
 % alignment in itemize and enumerate
 \newcommand{\listalign}{\makebox[11em][l]}
 
@@ -803,8 +804,7 @@
 
 %-----------------------------------------------------------
 %             Abbreviation and term database
-%-----------------------------------------------------------  
-   
+%-----------------------------------------------------------   
 %acronyms
 \RequirePackage{acro}
 %% probably a good idea for the nomenclature entries:

@@ -38,10 +38,18 @@
 }%
 
 %-----------------------------------------------------------
-%               	KRIS utils.
+%               	UNIZA utils.
 %-----------------------------------------------------------
 
 \usepackage[pagelayout,biblatex]{uniza_utils}
+
+%-----------------------------------------------------------
+%              	Item spacing in enumerate.
+%-----------------------------------------------------------
+
+% change list item spacing
+\setitemize{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
+\setenumerate{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
 
 %-----------------------------------------------------------
 %               Fonts, paragraphs.
