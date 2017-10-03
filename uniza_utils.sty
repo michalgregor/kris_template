@@ -34,8 +34,10 @@
 
 \if@printversion
 	\newcommand{\viewonly}[1]{}
+	\newcommand{\ifviewonly}[2]{#2}
 \else
 	\newcommand{\viewonly}[1]{#1}
+	\newcommand{\ifviewonly}[2]{#1}
 \fi
 
 %-----------------------------------------------------------
@@ -94,12 +96,18 @@
 %include babel in base mode to enable localization
 \RequirePackage[base]{babel}
 
+% a macro, which disables a shorthand if it exists,
+% without triggering an error if it does not
+\def\shorthandoff#1{} % gets redefined, once babel included
+\def\uniza@shorthandoff#1{\bbl@ifunset{bbl@active@\string#1}{}{\shorthandoff{#1}}}
+
 %some common localizations
 \addtolang{slovak}{\renewcommand{\tablename}{Tab.}}
 
 %fix behaviour of \cline in tabular when using slovak babel
 \usepackage{etoolbox}
-\preto\tabular{\shorthandoff{-}}
+\preto\tabular{\uniza@shorthandoff{-}}
+
 
 % to do stuff after a page ends
 \usepackage{afterpage}
@@ -307,7 +315,11 @@
 }
 
 \newcommand{\opensourcecode}{[open source code]}
-\newcommand{\opensourcecodestyle}[1]{\raggedleft\vspace{-1em}\scriptsize#1\vspace{-1em}}
+\newcommand{\opensourcecodestyle}[1]{\raggedleft\vspace{-1em}\scriptsize#1\vspace{-1.55em}\vspace{\dimexpr (1em- \baselinestretch em)\relax}}
+\newcommand{\nocodestyle}{\vspace{-0.25em}\vspace{\dimexpr (1em- \baselinestretch em) / 3 \relax}}
+\newcommand{\nocodestyle@minted}{\vspace{0.25em}}
+\newcommand{\nocodestyle@nominted}{\vspace{-0.25em}}
+\newcommand{\uniza@endcodestyle}{\vspace{-0.4em}\vspace{\dimexpr (1em- \baselinestretch em) \relax}}
 
 %\inputcode: arg1 - language, arg2 - file
 \define@boolkey{inputcode}{noattach}{}
@@ -343,7 +355,7 @@
 % code environment
 \newenvironment{code}{%
 \begin{center}\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}\pagebreak[3]}%
-{\end{center}\vspace{-1em}}%
+{\end{center}\uniza@endcodestyle}%
 
 \newcommand{\uniza@DetermineExt}[1]{%
 	\def\inlinecode@ext{txt}%
@@ -378,6 +390,9 @@
 % the version without minted
 %---------------------------
 \if@nominted
+
+\let\uniza@endcodestyle@tmp\uniza@endcodestyle
+\def\uniza@endcodestyle{\uniza@endcodestyle@tmp\vspace{-0.5em}}
 
 \RequirePackage{listingsutf8}
 \def\listingcounter{lstlisting}
@@ -436,10 +451,7 @@
 }
 
 \newcommand{\inputcode}[3][]{
-\vspace{-0.5em}
 \begingroup
-\inputcode@fontsize
-\renewcommand{\baselinestretch}{\inputcode@baselinestretch}
 \setkeys*{inputcode}{#1}
 	\let\XKV@rm@tmp\XKV@rm
 	\ifboolexpr{ bool{\inputcode@linenos} }{
@@ -465,63 +477,70 @@
 	\IfStrEq{#2}{text}{\def\lang{}}{}%
 	\let\XKV@rm@tmp\XKV@rm
 	\edef\XKV@rm{\XKV@rm@tmp,language=\lang}
-	\viewonly{%
+	\ifviewonly{%
 		\ifKV@inputcode@noattach%
+			\nocodestyle%
+			\nocodestyle@nominted%
 		\else%
-			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}\par}%
+			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}\vspace{1em}}\par}%
 		\fi%
+	}{%
+		\nocodestyle%
+		\nocodestyle@nominted%
 	}%
+	\inputcode@fontsize
+	\renewcommand{\baselinestretch}{\inputcode@baselinestretch}
 	\def\inputcode@zz{\lstinputlisting[}
 	\expandafter\inputcode@zz\XKV@rm]{\listingspath#3}
 \endgroup
-\vspace{-0.5em}
 }
 
 \newenvironment{inlinecode}[2][]{
-	\begingroup
-	\VerbatimEnvironment
-	\mubytein=0
-	\shorthandoff{-}
-	\setkeys*{inlinecode}{#1}
-	\let\inlinecode@XKV@rm\XKV@rm
-	\def\inlinecode@SecondArg{#2}
+	\begingroup%
+	\VerbatimEnvironment%
+	\mubytein=0%
+	\uniza@shorthandoff{-}%
+	\setkeys*{inlinecode}{#1}%
+	\let\inlinecode@XKV@rm\XKV@rm%
+	\def\inlinecode@SecondArg{#2}%
 	% the \if\else\fi construct seems to break code below,
 	% so we use ifundefined with an auxiliary macro instead
-	\let\inlinecode@noattach@aux\relax
-	\ifKV@inlinecode@noattach\else
-		\def\inlinecode@noattach@aux{}
-	\fi
-	\stepcounter{inlinecode@filecounter}
+	\let\inlinecode@noattach@aux\relax%
+	\ifKV@inlinecode@noattach\else%
+		\def\inlinecode@noattach@aux{}%
+	\fi%
+	\stepcounter{inlinecode@filecounter}%
 	\@ifundefined{inlinecode@ext}{%
 		\uniza@DetermineExt{#2}%
 	}{}%
-	\def\inlinecode@filename{\jobname-code-\theinlinecode@filecounter.\inlinecode@ext}
-    \let\FVB@VerbatimOut\uniza@FVB@VerbatimOut
-    \let\FVE@VerbatimOut\uniza@FVE@VerbatimOut
+	\def\inlinecode@filename{\jobname-code-\theinlinecode@filecounter.\inlinecode@ext}%
+    \let\FVB@VerbatimOut\uniza@FVB@VerbatimOut%
+    \let\FVE@VerbatimOut\uniza@FVE@VerbatimOut%
 	\begin{VerbatimOut}{\inlinecode@filename}%
 }{
 	\end{VerbatimOut}
-	\def\inlinecode@zz{\inputcode[}
-	\begin{code}
-	\@ifundefined{inlinecode@caption}{}{
-		\caption{\inlinecode@caption}
-	}
-	\viewonly{%
-		\ifKV@inlinecode@noattach\else
-			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir\inlinecode@filename}{\opensourcecode}}\par}%
-		\fi%
-	}
-	\@ifundefined{inlinecode@label}{}{
-		\label{\inlinecode@label}
-	}
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}
-	\end{code} %
+	\def\inlinecode@zz{\inputcode[}%
+	\begin{code}%
+	\@ifundefined{inlinecode@caption}{}{%
+		\caption{\inlinecode@caption}%
+	}%
+	\let\inlinecode@XKV@rmtmp\inlinecode@XKV@rm%
+	\ifKV@inlinecode@noattach%
+		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=true}%
+	\else%
+		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=false}%
+	\fi%
+	\@ifundefined{inlinecode@label}{}{%
+		\label{\inlinecode@label}%
+	}%
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}%
+	\end{code}%
 	\endgroup\noindent}
 
 %---------------------------
 % the version with minted
 %---------------------------
-\else % \if@nominted
+\else % if minted
 
 \RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
 \def\listingcounter{listing}
@@ -529,12 +548,17 @@
 
 \newcommand{\inputcode}[3][]{
 \begingroup
-\setkeys*{inputcode}{#1}
-	\viewonly{%
+	\setkeys*{inputcode}{#1}
+	\ifviewonly{%
 		\ifKV@inputcode@noattach%
+			\nocodestyle%
+			\nocodestyle@minted%
 		\else%
 			{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{#3}{\opensourcecode}}\par}%
 		\fi%
+	}{%
+		\nocodestyle%
+		\nocodestyle@minted%
 	}%
 	\@ifundefined{inputcode@firstline}{}{\setminted{firstline=\inputcode@firstline}}
 	\@ifundefined{inputcode@lastline}{}{\setminted{lastline=\inputcode@lastline}}
@@ -557,13 +581,13 @@
 }%
 {%
 	\end{minted}
-	\end{center}\vspace{-1em}}
+	\end{center}\uniza@endcodestyle}
 	
 \newenvironment{inlinecode}[2][]{
 	\begingroup
 	\VerbatimEnvironment
 	\mubytein=0
-	\shorthandoff{-}
+	\uniza@shorthandoff{-}
   	\renewcommand{\discretionary}[3]{#2}
 	\setkeys*{inlinecode}{#1}
 	\let\inlinecode@XKV@rm\XKV@rm
@@ -596,12 +620,15 @@
 	\@ifundefined{inlinecode@caption}{}{
 		\caption{\inlinecode@caption}
 	}
-	\viewonly{%
-		{\opensourcecodestyle{\textattachfile[color=0 0 0.5]{\mintedoutputdir\inlinecode@filename}{\opensourcecode}}\par}%
-	}
 	\@ifundefined{inlinecode@label}{}{
 		\label{\inlinecode@label}
 	}
+	\let\inlinecode@XKV@rmtmp\inlinecode@XKV@rm
+	\ifKV@inlinecode@noattach
+		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=true}
+	\else
+		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=false}
+	\fi%
 	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}
 	\end{code}} %
 	\endgroup\noindent}
