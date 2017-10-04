@@ -93,6 +93,11 @@
 %                     Generic stuff
 %-----------------------------------------------------------
 
+% ifChapter: a simple macro to detect whether \chapter exists
+\makeatletter
+\newif\ifChapter
+\@ifundefined{chapter}{\Chapterfalse}{\Chaptertrue}
+
 %include babel in base mode to enable localization
 \RequirePackage[base]{babel}
 
@@ -104,10 +109,8 @@
 %some common localizations
 \addtolang{slovak}{\renewcommand{\tablename}{Tab.}}
 
-%fix behaviour of \cline in tabular when using slovak babel
-\usepackage{etoolbox}
+% shorthand- breaks \cline in tabular; disable it
 \preto\tabular{\uniza@shorthandoff{-}}
-
 
 % to do stuff after a page ends
 \usepackage{afterpage}
@@ -176,11 +179,6 @@
 \newcolumntype{K}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \newcolumntype{X}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \newcolumntype{E}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
-
-% ifChapter: a simple macro to detect whether \chapter exists
-\makeatletter
-\newif\ifChapter
-\@ifundefined{chapter}{\Chapterfalse}{\Chaptertrue}
 
 %-----------------------------------------------------------
 %                   Bibliography stuff
@@ -291,6 +289,59 @@
 }
 
 %-----------------------------------------------------------
+%                       Counters
+%-----------------------------------------------------------
+
+% Page count, figure count, ...
+\usepackage{totpages}
+\usepackage[figure,table,page,algocf]{totalcount}
+
+%\def\totalalgorithms\totalalgocfs
+%\def\iftotalalgorithms\iftotalalgocfs
+
+% bibliography items count
+\usepackage{totcount}
+\newtotcounter{citenum}
+\def\oldbibitem{} \let\oldbibitem=\bibitem
+\def\bibitem{\stepcounter{citenum}\oldbibitem}
+
+% if we are using biblatex
+\@ifundefined{AtBeginBibliography}{}{
+	\AtBeginBibliography{
+		\apptocmd{\finentry}{\stepcounter{citenum}}{}{}
+	}
+}
+
+% appendix count
+\usepackage{assoccnt}
+
+\newcounter{truechapters}
+\regtotcounter{truechapters}
+
+\newcounter{totalchapters}
+\newcounter{appendixchapters}
+\DeclareAssociatedCounters{chapter}{totalchapters,appendixchapters}
+\regtotcounter{totalchapters}
+\regtotcounter{appendixchapters}
+
+\preto\appendix{%
+  % save the number of true chapters
+  \setcounter{truechapters}{\value{chapter}}%
+  % reset the number of chapters
+  \setcounter{appendixchapters}{0}%
+}
+
+% a patch for longtable when using totalcount
+\newif\ifLT@nocaption
+\preto\longtable{\LT@nocaptiontrue}
+\appto\endlongtable{%
+  \ifLT@nocaption
+    \addtocounter{table}{\m@ne}%
+  \fi}
+\preto\LT@caption{%
+  \noalign{\global\LT@nocaptionfalse}}
+
+%-----------------------------------------------------------
 %                       LISTINGS
 %-----------------------------------------------------------
 \usepackage{xstring}
@@ -391,12 +442,20 @@
 %---------------------------
 \if@nominted
 
+\DeclareFloatingEnvironment[name=\listingname,within=none]{listing}
+
+% we need to defer listings include after babel has been included, for shorthands not to break the listings
+\AtEndPreamble{
+
 \let\uniza@endcodestyle@tmp\uniza@endcodestyle
 \def\uniza@endcodestyle{\uniza@endcodestyle@tmp\vspace{-0.5em}}
 
 \RequirePackage{listingsutf8}
+
 \def\listingcounter{lstlisting}
-\DeclareFloatingEnvironment[name=\listingname,within=none]{listing}
+\DeclareTotalCounter{\listingcounter}
+\def\totallistings{\totallstlistings}
+\def\iftotallistings{\iftotallstlistings}
 
 % colors
 \definecolor{lst@comment}{HTML}{408080}
@@ -499,7 +558,7 @@
 	\begingroup%
 	\VerbatimEnvironment%
 	\mubytein=0%
-	\uniza@shorthandoff{-}%
+	\renewcommand{\discretionary}[3]{#2}
 	\setkeys*{inlinecode}{#1}%
 	\let\inlinecode@XKV@rm\XKV@rm%
 	\def\inlinecode@SecondArg{#2}%
@@ -537,14 +596,18 @@
 	\end{code}%
 	\endgroup\noindent}
 
+} % \AtEndPreamble
+
 %---------------------------
 % the version with minted
 %---------------------------
 \else % if minted
 
 \RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
-\def\listingcounter{listing}
 \setminted{breaklines=true}
+
+\def\listingcounter{listing}
+\DeclareTotalCounter{\listingcounter}
 
 \newcommand{\inputcode}[3][]{
 \begingroup
@@ -587,7 +650,6 @@
 	\begingroup
 	\VerbatimEnvironment
 	\mubytein=0
-	\uniza@shorthandoff{-}
   	\renewcommand{\discretionary}[3]{#2}
 	\setkeys*{inlinecode}{#1}
 	\let\inlinecode@XKV@rm\XKV@rm
@@ -635,59 +697,6 @@
 
 \fi % \if@nominted
 
-%-----------------------------------------------------------
-%                       Counters
-%-----------------------------------------------------------
-
-% Page count, figure count, ...
-\usepackage{totpages}
-\usepackage[figure,table,page,\listingcounter,algocf]{totalcount}
-
-%\def\totalalgorithms\totalalgocfs
-%\def\iftotalalgorithms\iftotalalgocfs
-
-% bibliography items count
-\usepackage{totcount}
-\newtotcounter{citenum}
-\def\oldbibitem{} \let\oldbibitem=\bibitem
-\def\bibitem{\stepcounter{citenum}\oldbibitem}
-
-% if we are using biblatex
-\@ifundefined{AtBeginBibliography}{}{
-	\AtBeginBibliography{
-		\apptocmd{\finentry}{\stepcounter{citenum}}{}{}
-	}
-}
-
-% appendix count
-\usepackage{assoccnt}
-
-\newcounter{truechapters}
-\regtotcounter{truechapters}
-
-\newcounter{totalchapters}
-\newcounter{appendixchapters}
-\DeclareAssociatedCounters{chapter}{totalchapters,appendixchapters}
-\regtotcounter{totalchapters}
-\regtotcounter{appendixchapters}
-
-\preto\appendix{%
-  % save the number of true chapters
-  \setcounter{truechapters}{\value{chapter}}%
-  % reset the number of chapters
-  \setcounter{appendixchapters}{0}%
-}
-
-% a patch for longtable when using totalcount
-\newif\ifLT@nocaption
-\preto\longtable{\LT@nocaptiontrue}
-\appto\endlongtable{%
-  \ifLT@nocaption
-    \addtocounter{table}{\m@ne}%
-  \fi}
-\preto\LT@caption{%
-  \noalign{\global\LT@nocaptionfalse}}
- 
 %-----------------------------------------------------------
 %							VIDEOS
 %-----------------------------------------------------------
