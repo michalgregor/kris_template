@@ -12,7 +12,7 @@
 % the supervisor field in theses
 \NewBibliographyString{bysupervisor}
 \DefineBibliographyStrings{english}{%
-   bysupervisor = {Thesis supervisor}
+   bysupervisor = {Thesis supervisor},
 }
 \DefineBibliographyStrings{slovak}{%
    bysupervisor = {Ved\'{u}ci pr\'{a}ce}
@@ -213,7 +213,7 @@
 \newbibmacro*{urldate}{%
   \iffieldundef{urlyear}{}%
   {\addspace\printtext[rbrackets]{%
-    \bibsstring{cited}%
+    \bibsstring{urlseen}%
     \addspace%
     \printurldate%
   }}%
