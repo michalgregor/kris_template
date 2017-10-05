@@ -84,7 +84,7 @@
 
 % Produces a latex compilation error if the specified label
 % is not defined.
-\newcommand{\assertref}[1]{\iflabelexists{#1}{}{\errmessage{LaTeX Error: Label assert failed for #1}}}
+\newcommand{\assertref}[1]{\iflabelexists{#1}{}{\message{LaTeX Warning: Label assert failed for #1}}}
 
 %-----------------------------------------------------------
 %                  Localization macro
