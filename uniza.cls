@@ -1,15 +1,23 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{uniza}[2017/09/20 UNIZA LaTeX Class]
 
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=uniza, prefix=uniza@}
+
 \newif\if@nominted\@nomintedfalse
-\DeclareOption{nominted}{
+\DeclareVoidOption{nominted}{
   \@nomintedtrue
   \PassOptionsToPackage{\CurrentOption}{uniza_utils}
 }
 
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
-\ProcessOptions \relax
+\DeclareStringOption[]{backend}
 
+\ProcessKeyvalOptions*\relax
+
+% pass the backend option to uniza_utils
+\PassOptionsToPackage{backend=\uniza@backend}{uniza_utils}%
+
+% load the class
 \LoadClass[12pt,a4paper,oneside,openany]{book}
 
 %-----------------------------------------------------------

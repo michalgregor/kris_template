@@ -1,32 +1,41 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{uniza_utils}[2017/09/20 KRIS Utils Package]
 
+\RequirePackage{xstring}
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=unizautils, prefix=unizautils@}
+
 \newif\if@biblatex
-\DeclareOption{biblatex}{
+\DeclareVoidOption{biblatex}{
   \@biblatextrue
 }
 
 \newif\if@printversion
-\DeclareOption{printversion}{
+\DeclareVoidOption{printversion}{
   \@printversiontrue
 }
 
 \newif\if@pagelayout\@pagelayoutfalse
-\DeclareOption{pagelayout}{
+\DeclareVoidOption{pagelayout}{
   \@pagelayouttrue
 }
 
 \newif\if@withbeamer\@withbeamerfalse
-\DeclareOption{withbeamer}{
+\DeclareVoidOption{withbeamer}{
   \@withbeamertrue
 }
 
 \newif\if@nominted\@nomintedfalse
-\DeclareOption{nominted}{
+\DeclareVoidOption{nominted}{
   \@nomintedtrue
 }
 
-\ProcessOptions\relax
+\DeclareStringOption[]{backend}
+
+\ProcessKeyvalOptions*\relax
+
+% pass the backend option to biblatex, if non-empty
+\IfStrEq{\unizautils@backend}{}{}{\PassOptionsToPackage{backend=\unizautils@backend}{biblatex}}%
 
 %-----------------------------------------------------------
 %				hide stuff from printversion
@@ -186,7 +195,7 @@
 % Sort and compress multiple numbers in \cite when using bibtex.
 
 \if@biblatex
-	\usepackage[backend=biber,style=iso-numeric]{biblatex}
+	\usepackage[style=iso-numeric]{biblatex}
 	
 	\appto{\bibsetup}{\sloppy}
 	
@@ -344,7 +353,6 @@
 %-----------------------------------------------------------
 %                       LISTINGS
 %-----------------------------------------------------------
-\usepackage{xstring}
 
 % listing name for referencing
 \newcommand{\listingname}{Lst.}
