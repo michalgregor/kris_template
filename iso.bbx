@@ -113,16 +113,17 @@
 
 % A name format which uses the family name and the initial of the given name.
 \DeclareNameFormat{family-giveninits}{%
-	\usebibmacro{name:family-given}
-      {\namepartfamily}
-      {\namepartgiveni}
-      {\namepartprefix}
-      {\namepartsuffix}
-  \usebibmacro{name:andothers}
-}
+	\nameparts{#1}%
+	\usebibmacro{name:family-given}%
+      {\namepartfamily}%
+      {\namepartgiveni}%
+      {\namepartprefix}%
+      {\namepartsuffix}%
+  \usebibmacro{name:andothers}%
+}%
 
-% By default, we use the family name, followed
-% by the initials of the given name.
+%% By default, we use the family name, followed
+%% by the initials of the given name.
 \DeclareNameAlias{default}{family-giveninits}
 % For supervisors, we instead use the full given name and the full family name.
 \DeclareNameAlias{supervisor}{given-family}
