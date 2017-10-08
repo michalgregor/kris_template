@@ -49,7 +49,23 @@
 %               	UNIZA utils.
 %-----------------------------------------------------------
 
-\usepackage[pagelayout,biblatex]{uniza_utils}
+\usepackage[pagelayout]{uniza_utils}
+
+%-----------------------------------------------------------
+%               	Bibliography
+%-----------------------------------------------------------
+
+\usepackage[style=iso-numeric]{biblatex}
+
+\appto{\bibsetup}{\sloppy}
+
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+
+\defbibheading{unchapter}{\unchapter{#1}}
+
+% if not using biblatex, you may want to use:
+% \usepackage[square,comma,sort&compress,numbers]{natbib}
 
 %-----------------------------------------------------------
 %              	Item spacing in enumerate.

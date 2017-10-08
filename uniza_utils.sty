@@ -5,11 +5,6 @@
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=unizautils, prefix=unizautils@}
 
-\newif\if@biblatex
-\DeclareVoidOption{biblatex}{
-  \@biblatextrue
-}
-
 \newif\if@printversion
 \DeclareVoidOption{printversion}{
   \@printversiontrue
@@ -33,9 +28,6 @@
 \DeclareStringOption[]{backend}
 
 \ProcessKeyvalOptions*\relax
-
-% pass the backend option to biblatex, if non-empty
-\IfStrEq{\unizautils@backend}{}{}{\PassOptionsToPackage{backend=\unizautils@backend}{biblatex}}%
 
 %-----------------------------------------------------------
 %				hide stuff from printversion
@@ -101,6 +93,7 @@
 %-----------------------------------------------------------
 %                     Generic stuff
 %-----------------------------------------------------------
+\usepackage{etoolbox}
 
 % ifChapter: a simple macro to detect whether \chapter exists
 \makeatletter
@@ -113,7 +106,17 @@
 % a macro, which disables a shorthand if it exists,
 % without triggering an error if it does not
 \def\shorthandoff#1{} % gets redefined, once babel included
-\def\uniza@shorthandoff#1{\bbl@ifunset{bbl@active@\string#1}{}{\shorthandoff{#1}}}
+
+
+\def\uniza@shorthandoff#1{%
+	\@ifundefined{bbl@ifunset}{%
+		\@ifundefined{bbl@active@\string#1}{}{%
+			\shorthandoff{#1}
+		}%
+	}{%
+		\def\uniza@shorthandoff#1{\bbl@ifunset{bbl@active@\string#1}{}{\shorthandoff{#1}}}%
+	}%
+}%
 
 %some common localizations
 \addtolang{slovak}{\renewcommand{\tablename}{Tab.}}
@@ -192,20 +195,64 @@
 %-----------------------------------------------------------
 %                   Bibliography stuff
 %-----------------------------------------------------------
-% Sort and compress multiple numbers in \cite when using bibtex.
 
-\if@biblatex
-	\usepackage[style=iso-numeric]{biblatex}
-	
-	\appto{\bibsetup}{\sloppy}
-	
-	\setcounter{biburllcpenalty}{7000}
-	\setcounter{biburlucpenalty}{8000}
-	
-	\defbibheading{unchapter}{\unchapter{#1}}
-\else
-	\usepackage[square,comma,sort&compress,numbers]{natbib}
-\fi
+% disable babel shorthands for bibtex
+\AtBeginEnvironment{thebibliography}{%
+	\languageshorthands{none}%
+}%
+
+%-----------------------------------------------------------
+%                       Counters
+%-----------------------------------------------------------
+
+% Page count, figure count, ...
+\usepackage{totpages}
+\usepackage[figure,table,page,algocf]{totalcount}
+
+\def\totalalgorithms{\totalalgocfs}
+\def\iftotalalgorithms{\iftotalalgocfs}
+
+% bibliography items count
+\usepackage{totcount}
+\newtotcounter{citenum}
+\def\oldbibitem{} \let\oldbibitem=\bibitem
+\def\bibitem{\stepcounter{citenum}\oldbibitem}
+
+% if we are using biblatex
+\@ifundefined{AtBeginBibliography}{}{
+	\AtBeginBibliography{
+		\apptocmd{\finentry}{\stepcounter{citenum}}{}{}
+	}
+}
+
+% appendix count
+\usepackage{assoccnt}
+
+\newcounter{truechapters}
+\regtotcounter{truechapters}
+
+\newcounter{totalchapters}
+\newcounter{appendixchapters}
+\DeclareAssociatedCounters{chapter}{totalchapters,appendixchapters}
+\regtotcounter{totalchapters}
+\regtotcounter{appendixchapters}
+
+\preto\appendix{%
+  % save the number of true chapters
+  \setcounter{truechapters}{\value{chapter}}%
+  % reset the number of chapters
+  \setcounter{appendixchapters}{0}%
+}
+
+% a patch for longtable when using totalcount
+\newif\ifLT@nocaption
+\preto\longtable{\LT@nocaptiontrue}
+\appto\endlongtable{%
+  \ifLT@nocaption
+    \addtocounter{table}{\m@ne}%
+  \fi}
+\preto\LT@caption{%
+  \noalign{\global\LT@nocaptionfalse}}
 
 %-----------------------------------------------------------
 %                     Setting algorithms
@@ -298,64 +345,11 @@
 }
 
 %-----------------------------------------------------------
-%                       Counters
-%-----------------------------------------------------------
-
-% Page count, figure count, ...
-\usepackage{totpages}
-\usepackage[figure,table,page,algocf]{totalcount}
-
-%\def\totalalgorithms\totalalgocfs
-%\def\iftotalalgorithms\iftotalalgocfs
-
-% bibliography items count
-\usepackage{totcount}
-\newtotcounter{citenum}
-\def\oldbibitem{} \let\oldbibitem=\bibitem
-\def\bibitem{\stepcounter{citenum}\oldbibitem}
-
-% if we are using biblatex
-\@ifundefined{AtBeginBibliography}{}{
-	\AtBeginBibliography{
-		\apptocmd{\finentry}{\stepcounter{citenum}}{}{}
-	}
-}
-
-% appendix count
-\usepackage{assoccnt}
-
-\newcounter{truechapters}
-\regtotcounter{truechapters}
-
-\newcounter{totalchapters}
-\newcounter{appendixchapters}
-\DeclareAssociatedCounters{chapter}{totalchapters,appendixchapters}
-\regtotcounter{totalchapters}
-\regtotcounter{appendixchapters}
-
-\preto\appendix{%
-  % save the number of true chapters
-  \setcounter{truechapters}{\value{chapter}}%
-  % reset the number of chapters
-  \setcounter{appendixchapters}{0}%
-}
-
-% a patch for longtable when using totalcount
-\newif\ifLT@nocaption
-\preto\longtable{\LT@nocaptiontrue}
-\appto\endlongtable{%
-  \ifLT@nocaption
-    \addtocounter{table}{\m@ne}%
-  \fi}
-\preto\LT@caption{%
-  \noalign{\global\LT@nocaptionfalse}}
-
-%-----------------------------------------------------------
 %                       LISTINGS
 %-----------------------------------------------------------
 
 % listing name for referencing
-\newcommand{\listingname}{Lst.}
+\newcommand{\uniza@listingname}{Lst.}
   
 % localization
 \addtolang{slovak}{\renewcommand{\opensourcecode}{[otvoriť zdrojový kód]}\renewcommand{\listingname}{Lst.}}
@@ -389,7 +383,7 @@
 \define@key{inputcode}{firstline}{\def\inputcode@firstline{#1}}
 \define@key{inputcode}{lastline}{\def\inputcode@lastline{#1}}
 
-\setkeys{inputcode}{linenos=true,noattach=false,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
+\setkeys{inputcode}{linenos=true,noattach=true,obeytabs=false,fontsize=\footnotesize,baselinestretch=1}
 
 % if encxvlna is used, we need to turn it off for inlinecode
 % using \mubytein=0; if enctex is not enabled, we define mubytein as a counter to avoid errors
@@ -409,7 +403,7 @@
 \define@key{inlinecode}{firstline}{\def\inlinecode@firstline{#1}}
 \define@key{inlinecode}{lastline}{\def\inlinecode@lastline{#1}}
 
-\setkeys{inlinecode}{noattach=false,linenos=true,obeytabs=true,fontsize=\footnotesize,baselinestretch=1}
+\setkeys{inlinecode}{noattach=true,linenos=true,obeytabs=false,fontsize=\footnotesize,baselinestretch=1}
 
 % code environment
 \newenvironment{code}{%
@@ -450,7 +444,7 @@
 %---------------------------
 \if@nominted
 
-\DeclareFloatingEnvironment[name=\listingname,within=none]{listing}
+\DeclareFloatingEnvironment[name=\uniza@listingname,within=none]{listing}
 
 % we need to defer listings include after babel has been included, for shorthands not to break the listings
 \AtEndPreamble{
@@ -612,6 +606,8 @@
 
 \RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
 \setminted{breaklines=true}
+
+\newcommand{\listingname}{\uniza@listingname}
 
 \def\listingcounter{listing}
 \DeclareTotalCounter{\listingcounter}
@@ -837,12 +833,15 @@
 
 \let\tmptitle\title
 \renewcommand{\title}[1]{\tmptitle{#1}\def\Title{#1}}
+\def\thetitle{\Title}
 
 \let\tmpauthor\author
 \renewcommand{\author}[1]{\tmpauthor{#1}\def\Author{#1}}
+\def\theauthor{\Author}
 
 \let\tmpdate\date
 \renewcommand{\date}[1]{\tmpdate{#1}\def\Date{#1}}
+\def\thedate{\Date}
 
 %-----------------------------------------------------------
 %             Abbreviation and term database
