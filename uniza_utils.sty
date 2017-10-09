@@ -107,14 +107,13 @@
 % without triggering an error if it does not
 \def\shorthandoff#1{} % gets redefined, once babel included
 
-
 \def\uniza@shorthandoff#1{%
 	\@ifundefined{bbl@ifunset}{%
 		\@ifundefined{bbl@active@\string#1}{}{%
 			\shorthandoff{#1}
 		}%
 	}{%
-		\def\uniza@shorthandoff#1{\bbl@ifunset{bbl@active@\string#1}{}{\shorthandoff{#1}}}%
+		\bbl@ifunset{bbl@active@\string#1}{}{\shorthandoff{#1}}%
 	}%
 }%
 
