@@ -285,8 +285,23 @@ Tento odsek by sa teda dal zapísať nasledujúcim spôsobom:
 Rovnice, ktoré sa majú zobrazovať osobitne, mimo riadku a majú byť číslované, sa dajú vložiť pomocou prostredia \texttt{equation}. Vyzerajú nasledovne:
 \begin{equation}
 x^2 + \alpha,
+\label{eq:dolezita_rovnica}
 \end{equation}
 kde $x$ je premenná a $\alpha$ je konštanta.
+
+Ak do rovnice vložíme návestie pomocou príkazu \texttt{label}, napr.:
+\begin{inlinecode}{latex}
+\begin{equation}
+x^2 + \alpha,
+\label{eq:dolezita_rovnica}
+\end{equation}
+\end{inlinecode}
+môžeme sa na rovnicu odkázať z textu pomocou príkazu \texttt{{\textbackslash}eqref}, t.j.:
+\begin{inlinecode}{latex}
+Odkaz na rovnicu \eqref{eq:dolezita_rovnica} z textu.
+\end{inlinecode}
+
+Výsledný odkaz sa zobrazí nasledovne: Odkaz na rovnicu \eqref{eq:dolezita_rovnica} z textu.
 
 \subsection{Odseky pokračujúce za rovnicou}
 
