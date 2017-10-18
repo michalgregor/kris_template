@@ -351,7 +351,7 @@
 \newcommand{\uniza@listingname}{Lst.}
   
 % localization
-\addtolang{slovak}{\renewcommand{\opensourcecode}{[otvoriť zdrojový kód]}\renewcommand{\listingname}{Lst.}}
+\addtolang{slovak}{\renewcommand{\opensourcecode}{[otvoriť zdrojový kód]}\renewcommand{\listingname}{\uniza@listingname}}
 
 \@ifundefined{auxfiles}
 {
@@ -604,9 +604,11 @@
 \else % if minted
 
 \RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
-\setminted{breaklines=true}
-
 \newcommand{\listingname}{\uniza@listingname}
+\renewcommand{\listingscaption}{\uniza@listingname}
+\addtolang{slovak}{\renewcommand{\listingname}{\uniza@listingname}}
+
+\setminted{breaklines=true}
 
 \def\listingcounter{listing}
 \DeclareTotalCounter{\listingcounter}
