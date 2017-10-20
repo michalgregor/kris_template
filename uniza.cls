@@ -4,11 +4,13 @@
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=uniza, prefix=uniza@}
 
-\newif\if@nominted\@nomintedfalse
-\DeclareVoidOption{nominted}{
-  \@nomintedtrue
+\DeclareBoolOption{nobiblatex}
+\DeclareComplementaryOption{biblatex}{nobiblatex}
+
+\DeclareBoolOption{nominted}{
   \PassOptionsToPackage{\CurrentOption}{uniza_utils}
 }
+\DeclareComplementaryOption{minted}{nominted}
 
 \DeclareStringOption[]{backend}
 
@@ -55,17 +57,19 @@
 %               	Bibliography
 %-----------------------------------------------------------
 
-\usepackage[style=iso-numeric]{biblatex}
-
-\appto{\bibsetup}{\sloppy}
-
-\setcounter{biburllcpenalty}{7000}
-\setcounter{biburlucpenalty}{8000}
-
-\defbibheading{unchapter}{\unchapter{#1}}
-
-% if not using biblatex, you may want to use:
-% \usepackage[square,comma,sort&compress,numbers]{natbib}
+\ifuniza@nobiblatex
+	% if not using biblatex, we want to use:
+	\usepackage[square,comma,sort&compress,numbers]{natbib}
+\else
+	\usepackage[style=iso-numeric]{biblatex}
+	
+	\appto{\bibsetup}{\sloppy}
+	
+	\setcounter{biburllcpenalty}{7000}
+	\setcounter{biburlucpenalty}{8000}
+	
+	\defbibheading{unchapter}{\unchapter{#1}}
+\fi
 
 %-----------------------------------------------------------
 %              	Item spacing in enumerate.

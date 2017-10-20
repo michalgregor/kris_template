@@ -15,15 +15,11 @@
   \@pagelayouttrue
 }
 
-\newif\if@withbeamer\@withbeamerfalse
-\DeclareVoidOption{withbeamer}{
-  \@withbeamertrue
-}
+\DeclareBoolOption{beamer}
+\DeclareComplementaryOption{nobeamer}{beamer}
 
-\newif\if@nominted\@nomintedfalse
-\DeclareVoidOption{nominted}{
-  \@nomintedtrue
-}
+\DeclareBoolOption{nominted}
+\DeclareComplementaryOption{minted}{nominted}
 
 \DeclareStringOption[]{backend}
 
@@ -44,7 +40,7 @@
 %-----------------------------------------------------------
 %                 Beamer-specific stuff
 %-----------------------------------------------------------
-\if@withbeamer
+\ifunizautils@beamer
 
 % beamer localization
 \newtranslation[to=Slovak]{Definition}{Definícia}
@@ -293,7 +289,7 @@
 \SetCommentSty{algcommentstyle}
 
 % algorithmname
-\if@withbeamer\else
+\ifunizautils@beamer\else
 	\newcommand{\algorithmname}{\algorithmcfname}
 \fi
 
@@ -441,7 +437,7 @@
 %---------------------------
 % the version without minted
 %---------------------------
-\if@nominted
+\ifunizautils@nominted
 
 \DeclareFloatingEnvironment[name=\uniza@listingname,within=none]{listing}
 
@@ -698,7 +694,7 @@
 	\end{code}} %
 	\endgroup\noindent}
 
-\fi % \if@nominted
+\fi % \ifunizautils@nominted
 
 %-----------------------------------------------------------
 %							VIDEOS
@@ -815,7 +811,7 @@
 %-----------------------------------------------------------
 %                 More document-specific stuff
 %-----------------------------------------------------------
-\if@withbeamer\else
+\ifunizautils@beamer\else
 
 %-----------------------------------------------------------
 %                 Inline enumeration lists
@@ -866,7 +862,7 @@
 \DeclareTranslation{slovak}{acronym-page-name}{s.}
 \DeclareTranslation{slovak}{acronym-pages-name}{s.}
 
-\fi %if@withbeamer
+\fi %ifunizautils@beamer
 
 %-----------------------------------------------------------
 %                    Highlight boxes
