@@ -37,6 +37,65 @@
 	\newcommand{\ifviewonly}[2]{#1}
 \fi
 
+
+%-----------------------------------------------------------
+%                       Counters
+%-----------------------------------------------------------
+\usepackage{etoolbox}
+
+% counters need to go in rather late, otherwise they
+% can be broken by packages such as fncychap
+\AtEndPreamble{
+% Page count, figure count, ...
+\usepackage{totpages}
+\usepackage[figure,table,page,algocf]{totalcount}
+
+\def\totalalgorithms{\totalalgocfs}
+\def\iftotalalgorithms{\iftotalalgocfs}
+
+% bibliography items count
+\usepackage{totcount}
+\newtotcounter{citenum}
+\def\oldbibitem{} \let\oldbibitem=\bibitem
+\def\bibitem{\stepcounter{citenum}\oldbibitem}
+
+% if we are using biblatex
+\@ifundefined{AtBeginBibliography}{}{
+	\AtBeginBibliography{
+		\apptocmd{\finentry}{\stepcounter{citenum}}{}{}
+	}
+}
+
+% appendix count
+\usepackage{assoccnt}
+
+\newcounter{truechapters}
+\regtotcounter{truechapters}
+
+\newcounter{totalchapters}
+\newcounter{appendixchapters}
+\DeclareAssociatedCounters{chapter}{totalchapters,appendixchapters}
+\regtotcounter{totalchapters}
+\regtotcounter{appendixchapters}
+
+\preto\appendix{%
+  % save the number of true chapters
+  \setcounter{truechapters}{\value{chapter}}%
+  % reset the number of chapters
+  \setcounter{appendixchapters}{0}%
+}
+
+% a patch for longtable when using totalcount
+\newif\ifLT@nocaption
+\preto\longtable{\LT@nocaptiontrue}
+\appto\endlongtable{%
+  \ifLT@nocaption
+    \addtocounter{table}{\m@ne}%
+  \fi}
+\preto\LT@caption{%
+  \noalign{\global\LT@nocaptionfalse}}
+}
+
 %-----------------------------------------------------------
 %                 Beamer-specific stuff
 %-----------------------------------------------------------
@@ -89,7 +148,6 @@
 %-----------------------------------------------------------
 %                     Generic stuff
 %-----------------------------------------------------------
-\usepackage{etoolbox}
 
 % ifChapter: a simple macro to detect whether \chapter exists
 \makeatletter
@@ -195,59 +253,6 @@
 \AtBeginEnvironment{thebibliography}{%
 	\languageshorthands{none}%
 }%
-
-%-----------------------------------------------------------
-%                       Counters
-%-----------------------------------------------------------
-
-% Page count, figure count, ...
-\usepackage{totpages}
-\usepackage[figure,table,page,algocf]{totalcount}
-
-\def\totalalgorithms{\totalalgocfs}
-\def\iftotalalgorithms{\iftotalalgocfs}
-
-% bibliography items count
-\usepackage{totcount}
-\newtotcounter{citenum}
-\def\oldbibitem{} \let\oldbibitem=\bibitem
-\def\bibitem{\stepcounter{citenum}\oldbibitem}
-
-% if we are using biblatex
-\@ifundefined{AtBeginBibliography}{}{
-	\AtBeginBibliography{
-		\apptocmd{\finentry}{\stepcounter{citenum}}{}{}
-	}
-}
-
-% appendix count
-\usepackage{assoccnt}
-
-\newcounter{truechapters}
-\regtotcounter{truechapters}
-
-\newcounter{totalchapters}
-\newcounter{appendixchapters}
-\DeclareAssociatedCounters{chapter}{totalchapters,appendixchapters}
-\regtotcounter{totalchapters}
-\regtotcounter{appendixchapters}
-
-\preto\appendix{%
-  % save the number of true chapters
-  \setcounter{truechapters}{\value{chapter}}%
-  % reset the number of chapters
-  \setcounter{appendixchapters}{0}%
-}
-
-% a patch for longtable when using totalcount
-\newif\ifLT@nocaption
-\preto\longtable{\LT@nocaptiontrue}
-\appto\endlongtable{%
-  \ifLT@nocaption
-    \addtocounter{table}{\m@ne}%
-  \fi}
-\preto\LT@caption{%
-  \noalign{\global\LT@nocaptionfalse}}
 
 %-----------------------------------------------------------
 %                     Setting algorithms
@@ -607,7 +612,10 @@
 \setminted{breaklines=true}
 
 \def\listingcounter{listing}
-\DeclareTotalCounter{\listingcounter}
+
+\AtEndPreamble{
+	\DeclareTotalCounter{\listingcounter}
+} % \AtEndPreamble
 
 \newcommand{\inputcode}[3][]{
 \begingroup
@@ -889,6 +897,7 @@
 \newcommand{\StickyNoteWidth}{0.8\textwidth}
 \newcommand{\stickynotename}{Note}
 \addtolang{slovak}{\renewcommand{\stickynotename}{Poznámka}}
+\newcommand{\stickynotestyle}{}
 
 \makeatletter
 \pgfdeclareshape{document}{
@@ -924,6 +933,8 @@
 \makeatother
 
 \newcommand{\StickyNote}[2]{
+\begingroup
+\stickynotestyle
 \begin{center}
 \begin{tikzpicture}
 \node[
@@ -948,6 +959,7 @@ inner ysep=10pt
 };
 \end{tikzpicture}
 \end{center}
+\endgroup
 }
 
 % usage: \StickyNote{Heading}{Content}.
