@@ -4,6 +4,12 @@
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=uniza, prefix=uniza@}
 
+% defaults for book
+\PassOptionsToClass{a4paper,oneside,openany}{book}
+
+\DeclareBoolOption{nofonts}
+\DeclareComplementaryOption{fonts}{nofonts}
+
 \DeclareBoolOption{nobiblatex}
 \DeclareComplementaryOption{biblatex}{nobiblatex}
 
@@ -14,13 +20,22 @@
 
 \DeclareStringOption[]{backend}
 
+% pass unknown options to book
+\DeclareDefaultOption{
+	\PassOptionsToClass{\CurrentOption}{book}
+}
+
 \ProcessKeyvalOptions*\relax
+
+\ifuniza@nofonts\else
+	\PassOptionsToClass{12pt}{book}
+\fi
 
 % pass the backend option to uniza_utils
 \PassOptionsToPackage{backend=\uniza@backend}{uniza_utils}%
 
 % load the class
-\LoadClass[12pt,a4paper,oneside,openany]{book}
+\LoadClass{book}
 
 %-----------------------------------------------------------
 %                     Encoding
@@ -54,6 +69,11 @@
 \usepackage[pagelayout]{uniza_utils}
 
 %-----------------------------------------------------------
+%                  spacing in StickyNote
+%-----------------------------------------------------------
+\renewcommand{\stickynotestyle}{\onehalfspacing}
+
+%-----------------------------------------------------------
 %               	Bibliography
 %-----------------------------------------------------------
 
@@ -84,8 +104,10 @@
 %-----------------------------------------------------------
 
 % fonts
-\usepackage{newtxtext,newtxmath} % must come before minted
-\renewcommand*\ttdefault{lmvtt}
+\ifuniza@nofonts\else
+	\usepackage{newtxtext,newtxmath} % must come before minted
+	\renewcommand*\ttdefault{lmvtt}
+\fi
 
 %-----------------------------------------------------------
 %               	Listings defaults.
@@ -422,7 +444,8 @@
 
 	\begingroup
 		\centering\normalsize
-		Vedúci práce: \Supervisor
+		\@ifundefined{Supervisor}{}{%
+		Vedúci práce: \Supervisor}
 		
 		Evidenčné číslo: \DocID
 		
@@ -433,6 +456,10 @@
 \endgroup
 \clearpage
 }
+
+\newcommand{\StudyProgrammeName}{Študijný program}
+\newcommand{\FieldOfStudyName}{Študijný odbor}
+\newcommand{\SupervisorInstName}{Školiace pracovisko}
 
 % maketitle
 \renewcommand{\maketitle}{
@@ -473,17 +500,27 @@
 	
 	\vfill
 	
-	Študijný program: \StudyProgramme \\
-	Študijný odbor: \FieldOfStudy \\
-	Školiace pracovisko:
+	\@ifundefined{StudyProgramme}{}{%
+	\StudyProgrammeName: \StudyProgramme \\}
+	\@ifundefined{FieldOfStudy}{}{%
+	\FieldOfStudyName: \FieldOfStudy \\}
+	\@ifundefined{SupervisorInst}{}{%
+	\SupervisorInstName:
 	\begin{alignedpage}{\columnwidth}
 	\SupervisorInst
-	\end{alignedpage}
-	Vedúci diplomovej práce: \Supervisor \\
-	\@ifundefined{Consultant}{}{
-	Konzultant: \Consultant \\
-	}
+	\end{alignedpage}}
+	\@ifundefined{Supervisor}{}{%
+	Vedúci práce: \Supervisor \\}
+	\@ifundefined{Consultant}{}{%
+	Konzultant: \Consultant \\}
 	
+	% fix spacing if there was nothing after alignedpage
+	\@ifundefined{Supervisor}{%
+		\@ifundefined{Consultant}{%
+			\mbox{}
+		}{}%
+	}{}%
+		
 	\begingroup
 	\centering
 	
@@ -537,7 +574,7 @@
 	
 		\vspace{\annotationSpacing}
 	
-		\Large \MakeUppercase{Anotačný záznam -- diplomová práca}
+		\Large \MakeUppercase{Anotačný záznam -- \Doctype}
 	
 	\endgroup
 	
@@ -575,10 +612,12 @@
 		
 		\vskip 1cm minus 1cm
 		
-		\textbf{Vedúci diplomovej práce:} \Supervisor \\
-		\@ifundefined{Consultant}{}{
+		\@ifundefined{Supervisor}{}{%
+		\textbf{Vedúci práce:} \Supervisor \\}
+		\@ifundefined{Consultant}{}{%
 		\textbf{Konzultant:} \Consultant \\}
-		\textbf{Recenzent:} \Reviewer
+		\@ifundefined{Reviewer}{}{%
+		\textbf{Recenzent:} \Reviewer}
 		
 		\vskip 1cm minus 1cm
 		
@@ -662,7 +701,7 @@
 	
 	{\centering \large \MakeUppercase{Čestné vyhlásenie}\\[1em]}
 	
-	Vyhlasujem, že som zadanú diplomovú prácu vypracoval  samostatne, pod odborným vedením vedúceho diplomovej práce, ktorým bol \Supervisor\ a používal som len literatúru uvedenú v práci.
+	Vyhlasujem, že som zadanú prácu vypracoval samostatne, pod odborným vedením vedúceho práce, ktorým bol \Supervisor\ a používal som len literatúru uvedenú v práci.
 	
 	Súhlasím so zverejnením práce a jej výsledkov.
 	
