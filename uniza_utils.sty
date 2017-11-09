@@ -325,11 +325,10 @@
 
 %-----------------------------------------------------------
 %        A macro to detect if arg output is empty
-%-----------------------------------------------------------  
+%----------------------------------------------------------- 
 
-% if #1 is empty, prints #2, otherwise #3
-% also defines \FirstArg as #1 so that #1 can be reused
-% within #2 and #3
+% if #1 does not print anything, uses #2, otherwise #3
+% also defines \argoutemptyFirstArg as #1 so that #1 can be reused within #2 and #3
 
 \newcommand{\ifargoutempty}[3]{
 \def\argoutemptyFirstArg{#1}
@@ -340,6 +339,17 @@
 	#2
 \else
 \endgroup
+	#3
+\fi
+}
+
+% if #1 is empty, uses #2, otherwise #3
+% also defines \argoutemptyFirstArg as #1 so that #1 can be reused within #2 and #3
+\newcommand{\ifargempty}[3]{
+\def\argoutemptyFirstArg{#1}
+\if\relax\detokenize{#1}\relax
+	#2
+\else
 	#3
 \fi
 }
@@ -359,7 +369,7 @@
 	\newcommand{\mintedoutputdir}{}
 	\newcommand{\listingspath}{}
 } {
-	\ifargoutempty{\auxfiles}{
+	\ifargempty{\auxfiles}{
 		\newcommand{\mintedoutputdir}{auxfiles/}
 	}{
 		\newcommand{\mintedoutputdir}{\auxfiles}
