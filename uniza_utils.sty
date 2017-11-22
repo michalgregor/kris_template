@@ -5,15 +5,22 @@
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=unizautils, prefix=unizautils@}
 
-\newif\if@printversion
-\DeclareVoidOption{printversion}{
-  \@printversiontrue
-}
+\DeclareBoolOption{printversion}
+\DeclareComplementaryOption{noprintversion}{printversion}
 
-\newif\if@pagelayout\@pagelayoutfalse
-\DeclareVoidOption{pagelayout}{
-  \@pagelayouttrue
-}
+\DeclareBoolOption{pagelayout}
+\DeclareComplementaryOption{nopagelayout}{pagelayout}
+
+% even if pagelayout is specified, pagestyle and
+% thispagestyle are not redefined so that they change
+% geometry
+\DeclareBoolOption{nogeometry}
+\DeclareComplementaryOption{geometry}{nogeometry}
+
+% even if pagelayout is specified, frontmatter, backmatter,
+% mainmatter, etc. are not redefined.
+\DeclareBoolOption{noredefmatter}
+\DeclareComplementaryOption{redefmatter}{noredefmatter}
 
 \DeclareBoolOption{beamer}
 \DeclareComplementaryOption{nobeamer}{beamer}
@@ -32,14 +39,13 @@
 %				hide stuff from printversion
 %-----------------------------------------------------------
 
-\if@printversion
+\ifunizautils@printversion
 	\newcommand{\viewonly}[1]{}
 	\newcommand{\ifviewonly}[2]{#2}
 \else
 	\newcommand{\viewonly}[1]{#1}
 	\newcommand{\ifviewonly}[2]{#1}
 \fi
-
 
 %-----------------------------------------------------------
 %                       Counters
@@ -309,7 +315,7 @@
 
 %mathematics
 \RequirePackage{amsmath}
-\RequirePackage[full]{textcomp}
+%\RequirePackage[full]{textcomp}
 \RequirePackage{amssymb,amsfonts,bm}
 \RequirePackage{siunitx}
 
@@ -333,28 +339,28 @@
 % if #1 does not print anything, uses #2, otherwise #3
 % also defines \argoutemptyFirstArg as #1 so that #1 can be reused within #2 and #3
 
-\newcommand{\ifargoutempty}[3]{
-\def\argoutemptyFirstArg{#1}
-\begingroup
-\def\item{n}
-\setbox0=\vbox{#1\unskip}\ifdim\wd0=0pt
-\endgroup
-	#2
-\else
-\endgroup
-	#3
-\fi
+\newcommand{\ifargoutempty}[3]{%
+\def\argoutemptyFirstArg{#1}%
+\begingroup%
+\def\item{n}%
+\setbox0=\vbox{#1\unskip}\ifdim\wd0=0pt%
+\endgroup%
+	#2%
+\else%
+\endgroup%
+	#3%
+\fi%
 }
 
 % if #1 is empty, uses #2, otherwise #3
 % also defines \argoutemptyFirstArg as #1 so that #1 can be reused within #2 and #3
-\newcommand{\ifargempty}[3]{
-\def\argoutemptyFirstArg{#1}
-\if\relax\detokenize{#1}\relax
-	#2
-\else
-	#3
-\fi
+\newcommand{\ifargempty}[3]{%
+\def\argoutemptyFirstArg{#1}%
+\if\relax\detokenize{#1}\relax%
+	#2%
+\else%
+	#3%
+\fi%
 }
 
 %-----------------------------------------------------------
@@ -1050,10 +1056,11 @@ inner ysep=10pt
 %-----------------------------------------------------------
 
 \makeatletter
-\if@pagelayout
+\ifunizautils@pagelayout
+
+\ifunizautils@nogeometry\else
 
 \RequirePackage{geometry}
-\RequirePackage{fancyhdr}
 
 % we define the default page format
 \newcommand{\defaultmargins}{top=1.25cm,bottom=1.5cm,left=3cm,right=2.5cm,head=1cm,headsep=0.75cm,foot=1cm,includehead,includefoot}
@@ -1088,11 +1095,17 @@ inner ysep=10pt
 	\savegeometry{origgeometry}
 	\afterpage{\egroup\loadgeometry{origgeometry}\bgroup}
 	
+	% save \baselinestretch
+	\let\uniza@tmpbaselinestretch\baselinestretch
+	
 	\@ifundefined{Gm@restore@@#1}{
 		\loadgeometry{default}
 	}{
 		\loadgeometry{#1}
 	}
+	
+	% restore baselinestretch
+	\def\baselinestretch{\uniza@tmpbaselinestretch}\@currsize
 	
 	\fancyhfoffset[O]{0pt} %recalculate fancy header stuff after newgeometry
 	\origthispagestyle{#1}
@@ -1101,19 +1114,32 @@ inner ysep=10pt
 % the same modification for pagestyle
 \let\origpagestyle=\pagestyle
 \renewcommand{\pagestyle}[1]{
+	% save \baselinestretch
+	\let\uniza@tmpbaselinestretch\baselinestretch
+
 	\@ifundefined{Gm@restore@@#1}{
 		\loadgeometry{default}
 	}{
 		\loadgeometry{#1}
 	}
+	
+	% restore baselinestretch
+	\def\baselinestretch{\uniza@tmpbaselinestretch}\@currsize
+	
 	\fancyhfoffset[O]{0pt} %recalculate fancy header stuff after newgeometry
 	\origpagestyle{#1}
 }
+
+\fi % nogeometry
+
+\RequirePackage{fancyhdr}
 
 %-----------------------------------------------------------
 % Redefine frontmatter, mainmatter and backmatter to use
 % the appropriate page styles.
 %-----------------------------------------------------------
+
+\ifunizautils@noredefmatter\else
 
 \renewcommand\frontmatter{%
     \cleardoublepage
@@ -1143,7 +1169,9 @@ inner ysep=10pt
 
 \addtolang{slovak}{\renewcommand{\appendixname}{Príloha}}
 
-\fi
+\fi % noredefmatter
+
+\fi % pagelayout
 \makeatother
 
 %-----------------------------------------------------------

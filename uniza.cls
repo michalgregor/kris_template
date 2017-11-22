@@ -10,6 +10,9 @@
 \DeclareBoolOption{nofonts}
 \DeclareComplementaryOption{fonts}{nofonts}
 
+\DeclareBoolOption{nospacing}
+\DeclareComplementaryOption{spacing}{nospacing}
+
 \DeclareBoolOption{nobiblatex}
 \DeclareComplementaryOption{biblatex}{nobiblatex}
 
@@ -17,6 +20,26 @@
   \PassOptionsToPackage{\CurrentOption}{uniza_utils}
 }
 \DeclareComplementaryOption{minted}{nominted}
+
+\DeclareBoolOption{printversion}{
+  \PassOptionsToPackage{\CurrentOption}{uniza_utils}
+}
+\DeclareComplementaryOption{noprintversion}{printversion}
+
+% even if pagelayout is specified, pagestyle and
+% thispagestyle are not redefined so that they change
+% geometry
+\DeclareBoolOption{nogeometry}{
+  \PassOptionsToPackage{\CurrentOption}{uniza_utils}
+}
+\DeclareComplementaryOption{geometry}{nogeometry}
+
+% even if pagelayout is specified, frontmatter, backmatter,
+% mainmatter, etc. are not redefined.
+\DeclareBoolOption{noredefmatter}{
+  \PassOptionsToPackage{\CurrentOption}{uniza_utils}
+}
+\DeclareComplementaryOption{redefmatter}{noredefmatter}
 
 \DeclareStringOption[]{backend}
 
@@ -49,6 +72,9 @@
 %-----------------------------------------------------------
 
 \usepackage{etoolbox}
+
+\ifuniza@nospacing\else
+
 \usepackage[doublespacing,nodisplayskipstretch]{setspace}
 
 % paragraph spacing
@@ -61,6 +87,8 @@
   \setlength\abovedisplayshortskip{0.75em}%
   \setlength\belowdisplayshortskip{0.25em}%
 }%
+
+\fi
 
 %-----------------------------------------------------------
 %               	UNIZA utils.
@@ -238,10 +266,6 @@
 %                        Page layout
 %-----------------------------------------------------------
 
-% empty pages should have no header and footer
-\defgeometry{empty}{}
-
-\defgeometry{default}{}
 \fancypagestyle{default}{
   \pagenumbering{arabic}
   \fancyhf{}% remove everything
@@ -260,10 +284,6 @@
   }
 }
 
-% we apply the defaults here
-\pagestyle{default}
-
-\defgeometry{frontpage}{}
 \fancypagestyle{frontpage}{
   \pagenumbering{gobble}
   \fancyhead{} % remove everything
@@ -281,7 +301,6 @@
   }
 }
 
-\defgeometry{frontmatter}{}
 \fancypagestyle{frontmatter}{
   \pagenumbering{roman}
   \fancyhead{} % remove everything
@@ -299,27 +318,7 @@
   }
 }
 
-% Backmatter pagestyle.
-\defgeometry{backmatter}{}
-\fancypagestyle{backmatter}{
-  \pagenumbering{Roman}
-  \fancyhead{} % remove everything
-  \fancyfoot{} % remove everything
-  \rfoot{\thepage}
-  \renewcommand{\headrulewidth}{0pt} % remove lines as well
-  \renewcommand{\footrulewidth}{0pt}
-  
-  \fancypagestyle{plain} {
-	\fancyhead{} % remove everything
-	\fancyfoot{} % remove everything
-	\rfoot{\thepage}
-	\renewcommand{\headrulewidth}{0pt} % remove lines as well
-	\renewcommand{\footrulewidth}{0pt}
-  }
-}
-
 % Appendix pagestyle.
-\defgeometry{appendix}{}
 \fancypagestyle{appendix}{
   \pagenumbering{Roman}
   \fancyhead{} % remove everything
@@ -338,6 +337,38 @@
 	\renewcommand{\footrulewidth}{0pt}
   }
 }
+
+% Backmatter pagestyle.
+\fancypagestyle{backmatter}{
+  \pagenumbering{Roman}
+  \fancyhead{} % remove everything
+  \fancyfoot{} % remove everything
+  \rfoot{\thepage}
+  \renewcommand{\headrulewidth}{0pt} % remove lines as well
+  \renewcommand{\footrulewidth}{0pt}
+  
+  \fancypagestyle{plain} {
+	\fancyhead{} % remove everything
+	\fancyfoot{} % remove everything
+	\rfoot{\thepage}
+	\renewcommand{\headrulewidth}{0pt} % remove lines as well
+	\renewcommand{\footrulewidth}{0pt}
+  }
+}
+
+\ifuniza@nogeometry\else
+
+\defgeometry{empty}{}
+\defgeometry{default}{}
+\defgeometry{frontpage}{}
+\defgeometry{frontmatter}{}
+\defgeometry{backmatter}{}
+\defgeometry{appendix}{}
+
+\fi % nogeometry
+
+% we apply the defaults here
+\pagestyle{default}
 
 %-----------------------------------------------------------
 %              		Chapter headings
@@ -567,7 +598,7 @@
 	\setlength{\parindent}{0pt}
 	\begingroup
 		\centering
-		\linespread{1}
+		\singlespacing
 		
 		\Large Žilinská univerzita v Žiline, Elektrotechnická fakulta \\
 		Katedra riadiacich a informačných systémov
