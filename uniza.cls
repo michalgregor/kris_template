@@ -91,6 +91,16 @@
 \fi
 
 %-----------------------------------------------------------
+%               Fonts, paragraphs.
+%-----------------------------------------------------------
+
+% fonts
+\ifuniza@nofonts\else
+	\usepackage{newtxtext,newtxmath} % must come before minted
+	\renewcommand*\ttdefault{lmvtt}
+\fi
+
+%-----------------------------------------------------------
 %               	UNIZA utils.
 %-----------------------------------------------------------
 
@@ -128,16 +138,6 @@
 \setenumerate{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
 
 %-----------------------------------------------------------
-%               Fonts, paragraphs.
-%-----------------------------------------------------------
-
-% fonts
-\ifuniza@nofonts\else
-	\usepackage{newtxtext,newtxmath} % must come before minted
-	\renewcommand*\ttdefault{lmvtt}
-\fi
-
-%-----------------------------------------------------------
 %               	Listings defaults.
 %-----------------------------------------------------------
 
@@ -149,7 +149,6 @@
 %                	Metadata macros
 %-----------------------------------------------------------
 
-\newcommand{\subtitle}[1]{\def\Subtitle{#1}}
 \newcommand{\academicyear}[1]{\def\AcademicYear{#1}}
 
 \newcommand{\doctype}[1]{\def\Doctype{#1}}
