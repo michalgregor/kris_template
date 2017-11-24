@@ -367,6 +367,9 @@
 %                       LISTINGS
 %-----------------------------------------------------------
 
+% used to prevent linebreaks after captions
+\usepackage{needspace}
+
 % listing name for referencing
 \newcommand{\uniza@listingname}{Lst.}
   
@@ -426,7 +429,7 @@
 
 % code environment
 \newenvironment{code}{%
-\begin{center}\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}\pagebreak[3]}%
+\begin{center}\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}\needspace{2\baselineskip}}%
 {\end{center}\uniza@endcodestyle}%
 
 \newcommand{\uniza@DetermineExt}[1]{%
@@ -660,6 +663,7 @@
 \newenvironment{noattach@inlinecode}[2]{
 	\begin{center}
 	\captionsetup{type=listing,singlelinecheck=off,justification=raggedright,position=top}
+	\needspace{2\baselineskip}
 	\@ifundefined{inlinecode@caption}{}{
 		\caption{\inlinecode@caption}
 	}
@@ -751,6 +755,7 @@
  {\VerbatimEnvironment
  \begin{center}\small
  \captionsetup{type=logfl,singlelinecheck=off,justification=raggedright,position=top}
+ \needspace{2\baselineskip}
  \ifcommandkey{caption}{\caption{\commandkey{caption}}}{\vspace{-1em}}
   \ifcommandkey{label}{\label{\commandkey{label}}}{}
  \begin{Verbatim}}
