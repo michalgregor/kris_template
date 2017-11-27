@@ -100,6 +100,10 @@
 	\renewcommand*\ttdefault{lmvtt}
 \fi
 
+% prevent margin overflows; as opposed to sloppy, this only
+% affects paragraphs, which would have produced overfull boxes
+\emergencystretch 3em
+
 %-----------------------------------------------------------
 %               	UNIZA utils.
 %-----------------------------------------------------------
