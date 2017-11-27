@@ -204,7 +204,7 @@
 \usepackage{pdfpages}
 
 % Allow arbitrary font sizes. Suppresses warnings.
-\usepackage{lmodern}
+%\usepackage{lmodern}
 
 %to do notes
 \RequirePackage{todonotes}
@@ -400,12 +400,13 @@
 \define@boolkey{inputcode}{noattach}{}
 \define@key{inputcode}{linenos}{\def\inputcode@linenos{#1}}
 \define@key{inputcode}{obeytabs}{\def\inputcode@obeytabs{#1}}
+\define@key{inputcode}{tabsize}{\def\inputcode@tabsize{#1}}
 \define@key{inputcode}{fontsize}{\def\inputcode@fontsize{#1}}
 \define@key{inputcode}{baselinestretch}{\def\inputcode@baselinestretch{#1}}
 \define@key{inputcode}{firstline}{\def\inputcode@firstline{#1}}
 \define@key{inputcode}{lastline}{\def\inputcode@lastline{#1}}
 
-\setkeys{inputcode}{linenos=true,noattach=true,obeytabs=false,fontsize=\footnotesize,baselinestretch=1}
+\setkeys{inputcode}{linenos=true,noattach=true,obeytabs=true,tabsize=4,fontsize=\footnotesize,baselinestretch=1}
 
 % if encxvlna is used, we need to turn it off for inlinecode
 % using \mubytein=0; if enctex is not enabled, we define mubytein as a counter to avoid errors
@@ -419,13 +420,14 @@
 \define@key{inlinecode}{label}{\def\inlinecode@label{#1}}
 \define@key{inlinecode}{linenos}{\def\inlinecode@linenos{#1}}
 \define@key{inlinecode}{obeytabs}{\def\inlinecode@obeytabs{#1}}
+\define@key{inlinecode}{tabsize}{\def\inlinecode@tabsize{#1}}
 \define@key{inlinecode}{fontsize}{\def\inlinecode@fontsize{#1}}
 \define@key{inlinecode}{baselinestretch}{\def\inlinecode@baselinestretch{#1}}
 \define@key{inlinecode}{ext}{\def\inlinecode@ext{#1}}
 \define@key{inlinecode}{firstline}{\def\inlinecode@firstline{#1}}
 \define@key{inlinecode}{lastline}{\def\inlinecode@lastline{#1}}
 
-\setkeys{inlinecode}{noattach=true,linenos=true,obeytabs=false,fontsize=\footnotesize,baselinestretch=1}
+\setkeys{inlinecode}{noattach=true,linenos=true,obeytabs=true,tabsize=4,fontsize=\footnotesize,baselinestretch=1}
 
 % code environment
 \newenvironment{code}{%
@@ -558,8 +560,10 @@
 	\IfStrEq{#2}{tex}{\def\lang{}}{}%
 	% text means no highlighting
 	\IfStrEq{#2}{text}{\def\lang{}}{}%
-	\let\XKV@rm@tmp\XKV@rm
-	\edef\XKV@rm{\XKV@rm@tmp,language=\lang}
+	\let\XKV@rm@tmp\XKV@rm%
+	\edef\XKV@rm{\XKV@rm@tmp,language=\lang}%
+	\let\XKV@rm@tmp\XKV@rm%
+	\edef\XKV@rm{\XKV@rm@tmp,tabsize=\inputcode@tabsize}%
 	\ifviewonly{%
 		\ifKV@inputcode@noattach%
 			\nocodestyle%
@@ -612,10 +616,12 @@
 	\else%
 		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=false}%
 	\fi%
+	\let\inlinecode@XKV@rmtmp\inlinecode@XKV@rm%
+	\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,tabsize=\inlinecode@tabsize}%
 	\@ifundefined{inlinecode@label}{}{%
 		\label{\inlinecode@label}%
 	}%
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}%
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}%
 	\end{code}%
 	\endgroup\noindent}
 
@@ -626,10 +632,18 @@
 %---------------------------
 \else % if minted
 
+% save original fancyvrb obeytabs macros
+\let\unizatmp@FV@@ObeyTabs\FV@@ObeyTabs
+\let\unizatmp@FV@TrueTab\FV@TrueTab
+
 \RequirePackage[cache,outputdir={\mintedoutputdir}]{minted}
 \newcommand{\listingname}{\uniza@listingname}
 \renewcommand{\listingscaption}{\uniza@listingname}
 \addtolang{slovak}{\renewcommand{\listingname}{\uniza@listingname}}
+
+% restore original fancyvrb obeytabs macros
+\let\FV@@ObeyTabs\unizatmp@FV@@ObeyTabs
+\let\FV@TrueTab\unizatmp@FV@TrueTab
 
 \setminted{breaklines=true}
 
@@ -656,7 +670,7 @@
 	\@ifundefined{inputcode@firstline}{}{\setminted{firstline=\inputcode@firstline}}
 	\@ifundefined{inputcode@lastline}{}{\setminted{lastline=\inputcode@lastline}}
 	\def\inputcode@zz{\inputminted[}
-	\expandafter\inputcode@zz\XKV@rm,fontsize=\inputcode@fontsize,baselinestretch=\inputcode@baselinestretch,obeytabs=\inputcode@obeytabs,linenos=\inputcode@linenos]{#2}{\listingspath#3}
+	\expandafter\inputcode@zz\XKV@rm,fontsize=\inputcode@fontsize,baselinestretch=\inputcode@baselinestretch,obeytabs=\inputcode@obeytabs,tabsize=\inputcode@tabsize,linenos=\inputcode@linenos]{#2}{\listingspath#3}
 \endgroup
 }
 
@@ -671,7 +685,7 @@
 		\label{\inlinecode@label}
 	}
 	\def\inlinecode@zz{\begin{minted}[}
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{#2}%
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{#2}%
 }%
 {%
 	\end{minted}
@@ -721,7 +735,7 @@
 	\else
 		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=false}
 	\fi%
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}
 	\end{code}} %
 	\endgroup\noindent}
 
