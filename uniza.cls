@@ -97,7 +97,7 @@
 % fonts
 \ifuniza@nofonts\else
 	\usepackage{newtxtext,newtxmath} % must come before minted
-	\renewcommand*\ttdefault{lmvtt}
+	\usepackage[scaled=0.8]{DejaVuSansMono}
 \fi
 
 % prevent margin overflows; as opposed to sloppy, this only
