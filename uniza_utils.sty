@@ -924,7 +924,9 @@
 %-----------------------------------------------------------
 
 % highlight macro \hl
-\usepackage{soulutf8}
+\usepackage[normalem]{ulem} % use normalem to protect \emph
+\def\hl{\bgroup\markoverwith
+  {\textcolor{yellow}{\rule[-.5ex]{2pt}{2.5ex}}}\ULon}
 
 %For use in equations:
 %	\begin{empheq}[innerbox=\Highlight]{align*}
