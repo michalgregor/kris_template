@@ -93,3 +93,15 @@ fmtutil -sys --all
 Keďže príkaz modifikuje systémovú inštaláciu, môže byť potrebné spustiť ho
 s administrátorskými privilégiami. Napr. na Ubuntu sa to dosiahne pomocou
 príkazu ``sudo``.
+
+# Šablóna na prezentácie
+
+Súbor presentation.tex obsahuje šablónu prezentácií v univerzitnom štýle
+(farby sú pre elektrotechnickú fakultu). Štýl je mierne upravený oproti
+PowerPoint-ovej šablóne: spodná lišta je presunutá hore a používa sa na
+zobrazovanie nadpisov.
+
+Šablóna je realizovaná pomocou balíčka beamer. Ku šablóne prezentácií patria
+štýlové súbory s príponou .sty, ktorých názov začína na beamer. Šablóna takisto
+používa aj štýlový súbor uniza_utils.sty, na ktorom je založená aj šablóna
+dokumentov.

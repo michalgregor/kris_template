@@ -35,6 +35,12 @@
 % pass optionas
 \PassOptionsToPackage{hyphens}{url}
 
+% for beamer compatibility
+\@ifundefined{if@openright}{
+	\newif\if@openright
+	\@openrightfalse
+}
+
 %-----------------------------------------------------------
 %				hide stuff from printversion
 %-----------------------------------------------------------
