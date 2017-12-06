@@ -102,6 +102,11 @@ PowerPoint-ovej šablóne: spodná lišta je presunutá hore a používa sa na
 zobrazovanie nadpisov.
 
 Šablóna je realizovaná pomocou balíčka beamer. Ku šablóne prezentácií patria
-štýlové súbory s príponou .sty, ktorých názov začína na beamer. Šablóna takisto
-používa aj štýlový súbor uniza_utils.sty, na ktorom je založená aj šablóna
-dokumentov.
+štýlové súbory s príponou .sty, ktorých názov začína na beamer. Ak sa majú
+tieto súbory inštalovať centrálne (aby sa nemuseli prikladať ku každej jednej
+prezentácii), inštalácia prebieha rovnako ako inštalácia iných tém pre beamer.
+Súbory je teda potrebné okopírovať do priečinka tex/latex/beamer/uniza v rámci
+LaTeX inštalácie, resp. do užívateľského texmf adresára.
+
+Šablóna takisto používa aj štýlový súbor uniza_utils.sty, na ktorom je založená
+aj šablóna dokumentov.
