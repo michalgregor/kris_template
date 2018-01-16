@@ -226,11 +226,11 @@
 \let\uniza@tmptodo\todo
 \def\todo{\begingroup\mubytein=0\uniza@todo@rest}
 \def\uniza@todo@rest{\@ifnextchar[\uniza@todofix@Opt\uniza@todofix@NoOpt}
-\def\uniza@todofix@Opt[#1]#2{%
+\long\def\uniza@todofix@Opt[#1]#2{%
 	\uniza@tmptodo[#1]{#2}%
 	\endgroup%
 }
-\def\uniza@todofix@NoOpt#1{%
+\long\def\uniza@todofix@NoOpt#1{%
 	\uniza@tmptodo{#1}%
 	\endgroup%
 }
