@@ -222,18 +222,6 @@
 
 %to do notes
 \RequirePackage{todonotes}
-% disable encxvlna for todonotes
-\let\uniza@tmptodo\todo
-\def\todo{\begingroup\mubytein=0\uniza@todo@rest}
-\def\uniza@todo@rest{\@ifnextchar[\uniza@todofix@Opt\uniza@todofix@NoOpt}
-\long\def\uniza@todofix@Opt[#1]#2{%
-	\uniza@tmptodo[#1]{#2}%
-	\endgroup%
-}
-\long\def\uniza@todofix@NoOpt#1{%
-	\uniza@tmptodo{#1}%
-	\endgroup%
-}
 
 %file attachments
 \RequirePackage{attachfile}
@@ -342,6 +330,7 @@
 %mathematics
 \RequirePackage{amsmath}
 %\RequirePackage[full]{textcomp}
+\newcommand\bmmax{2} % workaround for too many alphabets error
 \RequirePackage{amssymb,amsfonts,bm}
 \RequirePackage{siunitx}
 
