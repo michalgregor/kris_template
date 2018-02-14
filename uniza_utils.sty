@@ -153,6 +153,11 @@
 \newcommand{\assertref}[1]{\iflabelexists{#1}{}{\message{LaTeX Warning: Label assert failed for #1}}}
 
 %-----------------------------------------------------------
+%					ifmacroexists
+%-----------------------------------------------------------
+\newcommand{\ifmacroexists}[3]{\@ifundefined{#1}{#3}{#2}}
+
+%-----------------------------------------------------------
 %                  Localization macro
 %-----------------------------------------------------------
 
@@ -1043,16 +1048,70 @@ inner ysep=10pt
 % usage: \StickyNote{Heading}{Content}.
 
 %-----------------------------------------------------------
-%                   Optional content markup
+%                   Optional content
 %-----------------------------------------------------------
+\usepackage{environ}
+\usepackage{suffix}
 
+% setup the markup
 \newcommand{\optionalcolor}{red!50!black}
+\newcommand{\optionalmarkup}{\color{\optionalcolor}}
 
-\newenvironment{optional}{
-\begingroup
-\color{\optionalcolor}
-}{
-\endgroup
+% optional content: starred and unstarred version
+\makeatletter
+\newcommand{\opt}{%
+	\@ifstar%
+		\optStar%
+		\optNoStar%
+}
+\makeatother
+
+% the unstarred version
+\newcommand{\optNoStar}[1]{#1}
+\newenvironment{optional}{}{}
+
+% the starred version ignores markup but respects hidden
+\newcommand{\optStar}[1]{#1}
+\newenvironment{optional*}{}{}
+
+% content  is to be shown only when optional is hidden
+\newcommand{\wOptHidden}[1]{}
+\NewEnviron{wOptionalHidden}{}
+
+% the setoptional macro, which determines the behaviour
+\def\setoptional#1{%
+	\IfStrEq{#1}{markup}{%
+		\renewenvironment{optional}{%
+		\begingroup%
+		\optionalmarkup%
+		}{%
+		\endgroup%
+		}%
+		\renewcommand{\optNoStar}[1]{%
+			\begingroup\optionalmarkup##1\endgroup%
+		}%
+		\renewcommand\optStar[1]{##1}%
+		\renewenvironment{optional*}{}{}%
+		\renewcommand{\wOptHidden}[1]{}%
+		\RenewEnviron{wOptionalHidden}{}%
+	}{%
+	\IfStrEq{#1}{hidden}{%
+		\RenewEnviron{optional}{}%
+		\renewcommand{\optNoStar}[1]{}%
+		\renewcommand\optStar[1]{}%
+		\RenewEnviron{optional*}{}%
+		\renewcommand{\wOptHidden}[1]{##1}%
+		\renewenvironment{wOptionalHidden}{}{}%
+	}{%
+	\IfStrEq{#1}{show}{%
+		\renewenvironment{optional}{}{}%
+		\renewcommand{\optNoStar}[1]{##1}%
+		\renewcommand{\optStar}[1]{##1}%
+		\renewenvironment{optional*}{}{}%
+		\renewcommand{\wOptHidden}[1]{}%
+		\RenewEnviron{wOptionalHidden}{}%
+	}{\PackageError{unizautils}{Unknown optional handler #1.}{}}%
+	}}%
 }
 
 %-----------------------------------------------------------
