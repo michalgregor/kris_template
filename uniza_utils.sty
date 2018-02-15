@@ -42,6 +42,46 @@
 }
 
 %-----------------------------------------------------------
+%			if \includeauxprefix is set, prefix
+%				  aux filenames with it
+%-----------------------------------------------------------
+
+% example: \def\includeauxprefix{\jobname\string_}
+
+\@ifundefined{includeauxprefix}{}{
+	\def\@include#1 {%
+	  \clearpage
+	  \if@filesw
+	    \immediate\write\@mainaux{\string\@input{\includeauxprefix#1.aux}}%
+	  \fi
+	  \@tempswatrue
+	  \if@partsw
+	    \@tempswafalse
+	    \edef\reserved@b{#1}%
+	    \@for\reserved@a:=\@partlist\do
+	      {\ifx\reserved@a\reserved@b\@tempswatrue\fi}%
+	  \fi
+	  \if@tempswa
+	    \let\@auxout\@partaux
+	    \if@filesw
+	      \immediate\openout\@partaux \includeauxprefix#1.aux
+	      \immediate\write\@partaux{\relax}%
+	    \fi
+	    \@input@{#1.tex}%
+	    \clearpage
+	    \@writeckpt{#1}%
+	    \if@filesw
+	      \immediate\closeout\@partaux
+	    \fi
+	  \else
+	    \deadcycles\z@
+	    \@nameuse{cp@#1}%
+	  \fi
+	  \let\@auxout\@mainaux
+	}%
+}
+
+%-----------------------------------------------------------
 %				hide stuff from printversion
 %-----------------------------------------------------------
 
