@@ -466,7 +466,7 @@
 	\newcommand{\listingspath}{}
 } {
 	\ifargempty{\auxfiles}{
-		\newcommand{\mintedoutputdir}{auxfiles/}
+		\newcommand{\mintedoutputdir}{auxfiles}
 	}{
 		\newcommand{\mintedoutputdir}{\auxfiles}
 	}
@@ -701,7 +701,7 @@
 	\@ifundefined{inlinecode@label}{}{%
 		\label{\inlinecode@label}%
 	}%
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}%
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir/\inlinecode@filename}%
 	\end{code}%
 	\endgroup\noindent}
 
@@ -815,7 +815,7 @@
 	\else
 		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=false}
 	\fi%
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir\inlinecode@filename}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir/\inlinecode@filename}
 	\end{code}} %
 	\endgroup\noindent}
 
