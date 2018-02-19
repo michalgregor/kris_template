@@ -206,14 +206,17 @@
 %-----------------------------------------------------------
 
 % if chapters exist, number by chapters, otherwise by sections
-\def\numberby{chapter}
+
+\@ifundefined{numberby}{%
+	\def\numberby{chapter}%
+}{}
 
 %2-level equation numbering
-\numberwithin{equation}{chapter}
+\numberwithin{equation}{\numberby}
 %2-level figure numbering
-\numberwithin{figure}{chapter}
+\numberwithin{figure}{\numberby}
 %2-level table numbering
-\numberwithin{table}{chapter}
+\numberwithin{table}{\numberby}
 
 % keep floats in their sections
 %\RequirePackage[section]{placeins}
