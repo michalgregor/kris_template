@@ -1020,7 +1020,7 @@
 \newcommand{\StickyNoteWidth}{0.8\textwidth}
 \newcommand{\stickynotename}{Note}
 \addtolang{slovak}{\renewcommand{\stickynotename}{Poznámka}}
-\newcommand{\stickynotestyle}{}
+\newcommand{\stickynotestyle}{\centering}
 
 \makeatletter
 \pgfdeclareshape{document}{
@@ -1053,12 +1053,20 @@
 \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
 }
 }
-\makeatother
+
+\DeclareFloatingEnvironment[placement={!htbp},name=\stickynotename]{uniza@stickynotefloat}
+\DeclareCaptionLabelSeparator{bar}{ | }
+
+\captionsetup[uniza@stickynotefloat]{labelsep=bar,labelfont={bf,sc,large},textfont=bf,justification=justified,singlelinecheck=off}
 
 \newcommand{\StickyNote}[2]{
 \begingroup
+% save \baselinestretch
+\let\uniza@tmpbaselinestretch\baselinestretch
+\begin{uniza@stickynotefloat}
 \stickynotestyle
-\begin{center}
+% restore baselinestretch
+\def\baselinestretch{\uniza@tmpbaselinestretch}\@currsize
 \begin{tikzpicture}
 \node[
 document,
@@ -1074,16 +1082,18 @@ fill=\stickycolor,
 inner ysep=10pt
 ] {
 \parbox[t][][c]{\StickyNoteWidth}{
-\textbf{{\large \textsc{\stickynotename}} | #1}\\[0.5em]
+\caption{#1}
 \parindent1em
 \noindent
 #2
 }
 };
 \end{tikzpicture}
-\end{center}
+\end{uniza@stickynotefloat}
 \endgroup
 }
+
+\makeatother
 
 % usage: \StickyNote{Heading}{Content}.
 
