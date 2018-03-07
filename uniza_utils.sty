@@ -466,10 +466,10 @@
 	\newcommand{\listingspath}{}
 } {
 	\ifargoutempty{\auxfiles}{
-		\newcommand{\mintedoutputdir}{auxfiles}
-	}{
-		\newcommand{\mintedoutputdir}{\auxfiles}
-	}
+		\renewcommand{\auxfiles}{auxfiles}
+	}{}
+	
+	\newcommand{\mintedoutputdir}{\auxfiles}
 	\newcommand{\listingspath}{}
 }
 
