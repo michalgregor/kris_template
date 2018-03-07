@@ -465,7 +465,7 @@
 	\newcommand{\mintedoutputdir}{}
 	\newcommand{\listingspath}{}
 } {
-	\ifargempty{\auxfiles}{
+	\ifargoutempty{\auxfiles}{
 		\newcommand{\mintedoutputdir}{auxfiles}
 	}{
 		\newcommand{\mintedoutputdir}{\auxfiles}
