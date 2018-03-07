@@ -1355,6 +1355,31 @@ inner ysep=10pt
 }{\end{tabular}
 \end{minipage}\endgroup}
 
+%-----------------------------------------------------------
+%			Automatic line balancing (useful for
+%			titles and such).
+%-----------------------------------------------------------
+
+\def\balancedcenter{
+	\centering
+	\parfillskip=0pt
+	\leftskip=0pt plus .3\textwidth
+	\rightskip=0pt plus .3\textwidth
+	\emergencystretch=.3\textwidth
+}
+
+\def\balancedleft{
+	\parfillskip=0pt
+	\rightskip=0pt plus .5\textwidth
+	\emergencystretch=.3\textwidth
+}
+
+\def\balancedright{
+	\parfillskip=0pt
+	\leftskip=0pt plus .5\textwidth
+	\emergencystretch=.3\textwidth
+}
+
 % minipage with corrected vertical spacing
 \usepackage{environ}
 
