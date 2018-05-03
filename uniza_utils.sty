@@ -103,7 +103,7 @@
 \AtEndPreamble{
 % Page count, figure count, ...
 \usepackage{totpages}
-\usepackage[figure,table,page,algocf]{totalcount}
+\usepackage[figure,table,page]{totalcount}
 
 \def\totalalgorithms{\totalalgocfs}
 \def\iftotalalgorithms{\iftotalalgocfs}
@@ -463,6 +463,7 @@
 \@ifundefined{auxfiles}
 {
 	\newcommand{\mintedoutputdir}{}
+	\newcommand{\mintedoutputdirslash}{}
 	\newcommand{\listingspath}{}
 } {
 	\ifargoutempty{\auxfiles}{
@@ -470,6 +471,7 @@
 	}{}
 	
 	\newcommand{\mintedoutputdir}{\auxfiles}
+	\newcommand{\mintedoutputdirslash}{\auxfiles/}
 	\newcommand{\listingspath}{}
 }
 
@@ -518,7 +520,7 @@
 	\def\inlinecode@ext{txt}%
 	\IfStrEq{#1}{python}{\def\inlinecode@ext{py}}{}%
 }%
-
+%
 % hacks borrowed from minted to deal with utf stuff
 \newcounter{uniza@FancyVerbLineTemp}
 \newcommand{\uniza@write@detok}[1]{%
@@ -701,7 +703,7 @@
 	\@ifundefined{inlinecode@label}{}{%
 		\label{\inlinecode@label}%
 	}%
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir/\inlinecode@filename}%
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdirslash\inlinecode@filename}%
 	\end{code}%
 	\endgroup\noindent}
 
@@ -815,7 +817,7 @@
 	\else
 		\edef\inlinecode@XKV@rm{\inlinecode@XKV@rmtmp,noattach=false}
 	\fi%
-	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdir/\inlinecode@filename}
+	\expandafter\inlinecode@zz\inlinecode@XKV@rm,fontsize=\inlinecode@fontsize,baselinestretch=\inlinecode@baselinestretch,obeytabs=\inlinecode@obeytabs,tabsize=\inlinecode@tabsize,linenos=\inlinecode@linenos]{\inlinecode@SecondArg}{\mintedoutputdirslash\inlinecode@filename}
 	\end{code}} %
 	\endgroup\noindent}
 
