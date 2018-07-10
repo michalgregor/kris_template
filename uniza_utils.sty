@@ -318,6 +318,7 @@
 %-----------------------------------------------------------
 
 % disable babel shorthands for bibtex
+
 \AtBeginEnvironment{thebibliography}{%
 	\languageshorthands{none}%
 }%
@@ -1012,6 +1013,8 @@
 
 \def\HiLi{\leavevmode\rlap{\hbox to \hsize{\color{gray!30}\leaders\hrule height .8\baselineskip depth .5ex\hfill}}}
 
+\newcommand{\mathhl}[1]{\colorbox{gray!30}{$\displaystyle #1$}}
+
 %-----------------------------------------------------------
 %                     Sticky notes
 %-----------------------------------------------------------
@@ -1311,19 +1314,19 @@ inner ysep=10pt
 
 \ifunizautils@noredefmatter\else
 
-\renewcommand\frontmatter{%
+\def\frontmatter{%
     \cleardoublepage
     \@mainmatterfalse
     \pagestyle{frontmatter}
 }
 
-\renewcommand\mainmatter{%
+\def\mainmatter{%
     \cleardoublepage
     \@mainmattertrue
     \pagestyle{default}
 }
 
-\renewcommand\backmatter{%
+\def\backmatter{%
     \if@openright
       \cleardoublepage
     \else
