@@ -3,7 +3,9 @@
 
 \RequirePackage[base]{babel}
 
-\AfterBabelLanguage{english}{
+\newcommand{\bisoaddtolang}[2]{\AfterBabelLanguage{#1}{\ifcsname extras#1\endcsname \expandafter\addto\csname extras#1\endcsname{#2}\fi}}
+
+\bisoaddtolang{english}{
     \def\bisoand{and}%
     \def\bisoetal{et~al.}%
     \def\bisoeditors{editors}%
@@ -19,7 +21,6 @@
     \def\bisochapter{chap.}%
     \def\bisotechrep{Tech. Rep.}%
     \def\bisomthesis{master's thesis}%
-    \def\bisomathesis{\bisomthesis}%
     \def\bisophdthesis{Ph.D. thesis}%
     \def\bisoavailablefrom{Available from}%
     \def\bisocited{cit.}%
@@ -37,7 +38,7 @@
     \def\bisodec{Dec.}%
 }
 
-\AfterBabelLanguage{slovak}{
+\bisoaddtolang{slovak}{
 	\def\bisoand{a}%
 	\def\bisoetal{a kol.}%
 	\def\bisoeditors{ed.}%

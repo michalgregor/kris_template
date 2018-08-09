@@ -797,7 +797,7 @@ FUNCTION {format.edition}
   }{
       ""
       % we make sure that ed. is not displayed if edition is not a number
-      "\bisoifnum{" * edition * "}{" * bbl.edition * " }{}" *
+      "\bisoifnum{" * edition * "}{" * bbl.edition * "\ " * "}{}" *
       edition
       output.state mid.sentence =
         { "l" }
