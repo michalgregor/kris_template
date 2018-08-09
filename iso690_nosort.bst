@@ -66,6 +66,10 @@ ENTRY
 	urldate
     volume
     year
+    location
+    eventdate
+    subtitle
+    titleaddon
   }
   {}
   { label }
@@ -76,7 +80,7 @@ FUNCTION {init.state.consts}
   #2 'after.sentence :=
   #3 'after.block :=
 }
-STRINGS { s t}
+STRINGS { s t language.state change.temp}
 FUNCTION {output.nonnull}
 { 's :=
   output.state mid.sentence =
@@ -88,7 +92,7 @@ FUNCTION {output.nonnull}
         }
         { output.state before.all =
             'write$
-            { add.period$ " " * write$ }
+            { add.period$ "\ " * write$ }
           if$
         }
       if$
@@ -97,6 +101,85 @@ FUNCTION {output.nonnull}
   if$
   s
 }
+
+FUNCTION {define.macros}
+{
+    "\makeatletter"
+    write$ newline$
+    "\@ifundefined{bisotitlecap}{\def\bisotitlecap#1{#1}}{}"
+    write$ newline$
+
+    "\newcommand{\bisomacro}[2]{"
+    "   \@ifundefined{biso#1}{"                             *
+    "       \expandafter\def\csname biso#1\endcsname{#2}"   *
+    "   }{}"                                                *
+    "}"                                                     *
+    write$ newline$
+
+    "\bisomacro{and}{and}"
+    "\bisomacro{etal}{et~al.}" *
+    "\bisomacro{editors}{editors}" *
+    "\bisomacro{editor}{editor}" *
+    "\bisomacro{edby}{edited by}" *
+    "\bisomacro{edition}{ed.}" *
+    "\bisomacro{volume}{vol.}" *
+    "\bisomacro{of}{of}" *
+    "\bisomacro{number}{no.}" *
+    "\bisomacro{in}{in}" *
+    "\bisomacro{pages}{pp.}" *
+    "\bisomacro{page}{p.}" *
+    "\bisomacro{chapter}{chap.}" *
+    "\bisomacro{techrep}{Tech. Rep.}" *
+    "\bisomacro{mthesis}{master's thesis}" *
+    "\bisomacro{mathesis}{\bisomthesis}" *
+    "\bisomacro{phdthesis}{Ph.D. thesis}" *
+    "\bisomacro{availablefrom}{Available from}" *
+    "\bisomacro{cited}{cit.}" *
+    "\bisomacro{jan}{Jan.}" *
+    "\bisomacro{feb}{Feb.}" *
+    "\bisomacro{mar}{Mar.}" *
+    "\bisomacro{apr}{Apr.}" *
+    "\bisomacro{may}{May}" *
+    "\bisomacro{jun}{Jun.}" *
+    "\bisomacro{jul}{Jul.}" *
+    "\bisomacro{aug}{Aug.}" *
+    "\bisomacro{sep}{Sep.}" *
+    "\bisomacro{oct}{Oct.}" *
+    "\bisomacro{nov}{Nov.}" *
+    "\bisomacro{dec}{Dec.}" *
+    write$ newline$
+
+    "\def\bisostr#1{\@ifundefined{biso#1}{#1}{\csname biso#1\endcsname}}"
+    write$ newline$
+
+    "\newcommand\bisofirstcap[1]{\edef\bisofirstarg{#1}\expandafter\bisofirstcapaux\bisofirstarg\relax}"
+    "\def\bisofirstcapaux#1#2\relax{\expandafter\uppercase{#1}#2}" *
+    write$ newline$
+    
+    "\def\bisoifnum#1#2#3{%"
+    write$ newline$
+    "\if\relax\detokenize\expandafter{\romannumeral-0#1}\relax%"
+    write$ newline$
+    "#2%"
+    write$ newline$
+    "\else%"
+    write$ newline$
+    "#3%"
+    write$ newline$
+    "\fi}"
+    write$ newline$
+
+    "\makeatother"
+    write$ newline$
+}
+
+FUNCTION {titlecap}
+{ duplicate$ empty$
+    { pop$ "" }
+    { "\bisotitlecap{" swap$ * "}" * }
+  if$
+}
+
 FUNCTION {output}
 { duplicate$ empty$
     'pop$
@@ -133,7 +216,7 @@ FUNCTION {new.sentence}
   if$
 }
 FUNCTION {add.blank}
-{ " " * before.all 'output.state :=
+{ "\ " * before.all 'output.state :=
 }
 
 FUNCTION {date.block}
@@ -209,99 +292,99 @@ FUNCTION {bib.fname.font}
 FUNCTION {tie.or.space.prefix}
 { duplicate$ text.length$ #3 <
     { "~" }
-    { " " }
+    { "\ " }
   if$
   swap$
 }
 
 FUNCTION {capitalize}
-{ "u" change.case$ "t" change.case$ }
+{ "\bisofirstcap{" swap$ * "}" *}
 
 FUNCTION {space.word}
-{ " " swap$ * " " * }
+{ "\ " swap$ * "\ " * }
  % Here are the language-specific definitions for explicit words.
  % Each function has a name bbl.xxx where xxx is the English word.
  % The language selected here is ENGLISH
 FUNCTION {bbl.and}
-{ "and"}
+{ "\bisoand"}
 
 FUNCTION {bbl.etal}
-{ "et~al." }
+{ "\bisoetal" }
 
 FUNCTION {bbl.editors}
-{ "editors" }
+{ "\bisoeditors" }
 
 FUNCTION {bbl.editor}
-{ "editor" }
+{ "\bisoeditor" }
 
 FUNCTION {bbl.edby}
-{ "edited by" }
+{ "\bisoedby" }
 
 FUNCTION {bbl.edition}
-{ "ed." }
+{ "\bisoedition" }
 
 FUNCTION {bbl.volume}
-{ "vol." }
+{ "\bisovolume" }
 
 FUNCTION {bbl.of}
-{ "of" }
+{ "\bisoof" }
 
 FUNCTION {bbl.number}
-{ "no." }
+{ "\bisonumber" }
 
 FUNCTION {bbl.nr}
-{ "no." }
+{ "\bisonumber" }
 
 FUNCTION {bbl.in}
-{ "in" }
+{ "\bisoin" }
 
 FUNCTION {bbl.pages}
-{ "pp." }
+{ "\bisopages" }
 
 FUNCTION {bbl.page}
-{ "p." }
+{ "\bisopage" }
 
 FUNCTION {bbl.chapter}
-{ "chap." }
+{ "\bisochapter" }
 
 FUNCTION {bbl.techrep}
-{ "Tech. Rep." }
+{ "\bisotechrep" }
 
 FUNCTION {bbl.mthesis}
-{ "Master's thesis" }
+{ "\bisomthesis" }
 
 FUNCTION {bbl.phdthesis}
-{ "Ph.D. thesis" }
+{ "\bisophdthesis" }
 
 FUNCTION {bbl.availablefrom}
-{ "Available from" }
+{ "\bisoavailablefrom" }
 
 FUNCTION {bbl.cited}
-{ "cit." }
+{ "\bisocited" }
 
-MACRO {jan} {"Jan."}
+MACRO {jan} {"\bisojan"}
 
-MACRO {feb} {"Feb."}
+MACRO {feb} {"\bisofeb"}
 
-MACRO {mar} {"Mar."}
+MACRO {mar} {"\bisomar"}
 
-MACRO {apr} {"Apr."}
+MACRO {apr} {"\bisoapr"}
 
-MACRO {may} {"May"}
+MACRO {may} {"\bisomay"}
 
-MACRO {jun} {"Jun."}
+MACRO {jun} {"\bisojun"}
 
-MACRO {jul} {"Jul."}
+MACRO {jul} {"\bisojul"}
 
-MACRO {aug} {"Aug."}
+MACRO {aug} {"\bisoaug"}
 
-MACRO {sep} {"Sep."}
+MACRO {sep} {"\bisosep"}
 
-MACRO {oct} {"Oct."}
+MACRO {oct} {"\bisooct"}
 
-MACRO {nov} {"Nov."}
+MACRO {nov} {"\bisonov"}
 
-MACRO {dec} {"Dec."}
+MACRO {dec} {"\bisodec"}
 
 MACRO {acmcs} {"ACM Computing Surveys"}
 
@@ -414,14 +497,14 @@ FUNCTION {format.names}
           namesleft #1 >
             { " -- " * t * }
             {
-			  " " *
+			  "\ " *
               s nameptr "{ll}" format.name$ duplicate$ "others" =
                 { 't := }
                 { pop$ }
               if$
               t "others" =
                 {
-                  " " * bbl.etal *
+                  "\ " * bbl.etal *
                 }
                 {
                   " -- " * t *
@@ -465,7 +548,7 @@ FUNCTION {format.names.ed}
               t "others" =
                 {
 
-                  " " * bbl.etal *
+                  "\ " * bbl.etal *
                 }
                 {
                   " -- " * t *
@@ -493,7 +576,7 @@ FUNCTION {format.editors}
 { editor "editor" format.names duplicate$ empty$ 'skip$
     {
       "," *
-      " " *
+      "\ " *
       get.bbl.editor
       *
     }
@@ -548,14 +631,26 @@ FUNCTION {format.note}
 }
 
 FUNCTION {format.title}
-{ title
-  "title" bibinfo.check
+{ title "title" bibinfo.check
   duplicate$ empty$ 'skip$
     {
-      emphasize
+        subtitle empty$ 'skip$
+        {
+            ": " * subtitle *
+        }
+        if$
+
+        titlecap emphasize
+
+        titleaddon empty$ 'skip$
+        {
+            ". " titleaddon * titlecap *
+        }
+        if$
     }
   if$
 }
+
 FUNCTION {output.bibitem}
 { newline$
   "\bibitem{" write$
@@ -594,7 +689,7 @@ FUNCTION {n.dashify}
 
 FUNCTION {word.in}
 { bbl.in capitalize
-  " " * }
+  "\ " * }
 
 FUNCTION {format.date}
 {
@@ -609,7 +704,7 @@ FUNCTION {format.date}
     { swap$ 'skip$
         {
           swap$
-          " " * swap$
+          "\ " * swap$
         }
       if$
       *
@@ -644,7 +739,7 @@ FUNCTION {format.url}
 		   "." * %if there is no (cited ...), we add a . separator here
 		 }
          { 
-            "~(" * bbl.cited * " " * urldate * ")" *
+            "~(" * bbl.cited * "\ " * urldate * ")" *
          }
          if$
     }
@@ -652,14 +747,8 @@ FUNCTION {format.url}
 }
 
 FUNCTION {format.btitle}
-{ title "title" bibinfo.check
-  duplicate$ empty$ 'skip$
-    {
-	 emphasize
-     %select.language
-    }
-  if$
-}
+{ format.title }
+
 FUNCTION {either.or.check}
 { empty$
     'pop$
@@ -703,17 +792,21 @@ FUNCTION {format.number.series}
 }
 
 FUNCTION {format.edition}
-{ edition duplicate$ empty$ 'skip$
-    {
+{ edition empty$ {
+      edition
+  }{
+      ""
+      % we make sure that ed. is not displayed if edition is not a number
+      "\bisoifnum{" * edition * "}{" * bbl.edition * " }{}" *
+      edition
       output.state mid.sentence =
         { "l" }
         { "t" }
-      if$ change.case$
-      "edition" bibinfo.check
-      " " * bbl.edition *
+      if$ change.case$ *
     }
   if$
 }
+
 INTEGERS { multiresult }
 FUNCTION {multi.page.check}
 { 't :=
@@ -831,7 +924,7 @@ FUNCTION {format.in.ed.booktitle}
       editor "editor" format.names.ed duplicate$ empty$ 'pop$
         {
           "," *
-          " " *
+          "\ " *
           get.bbl.editor
           ", " *
           * swap$
@@ -851,10 +944,11 @@ FUNCTION {empty.misc.check}
   if$
 }
 FUNCTION {format.thesis.type}
-{ type duplicate$ empty$
-    'pop$
-    { swap$ pop$
-      "t" change.case$ "type" bibinfo.check
+{ type empty$
+    'skip$
+    { 
+      pop$
+      "\bisofirstcap{\bisostr{" type * "}}" *
     }
   if$
 }
@@ -879,7 +973,7 @@ FUNCTION {format.article.crossref}
         { "journal" bibinfo.check emphasize word.in swap$ * }
       if$
     }
-    { word.in swap$ * " " *}
+    { word.in swap$ * "\ " *}
   if$
   " \cite{" * crossref * "}" *
 }
@@ -890,7 +984,7 @@ FUNCTION {format.crossref.editor}
   #2 >
     { pop$
       "editor" bibinfo.check
-      " " * bbl.etal
+      "\ " * bbl.etal
       *
     }
     { #2 <
@@ -898,7 +992,7 @@ FUNCTION {format.crossref.editor}
         { editor #2 "{ff }{vv }{ll}{ jj}" format.name$ "others" =
             {
               "editor" bibinfo.check
-              " " * bbl.etal
+              "\ " * bbl.etal
               *
             }
             {
@@ -955,10 +1049,10 @@ FUNCTION {format.incoll.inproc.crossref}
             { word.in swap$ * }
           if$
         }
-        { word.in key * " " *}
+        { word.in key * "\ " *}
       if$
     }
-    { word.in format.crossref.editor * " " *}
+    { word.in format.crossref.editor * "\ " *}
   if$
   " \cite{" * crossref * "}" *
 }
@@ -1139,6 +1233,9 @@ FUNCTION {incollection}
       format.number.series output
       format.chapter.pages output
       new.sentence
+      location output
+      eventdate output
+      new.sentence
       format.publisher.address output
       format.edition output
       format.isbn output
@@ -1165,6 +1262,9 @@ FUNCTION {inproceedings}
       format.bvolume output
       format.number.series output
       format.pages output
+      new.sentence
+      location output
+      eventdate output
       new.sentence
       publisher empty$
         { format.organization.address output }
@@ -1233,7 +1333,7 @@ FUNCTION {mastersthesis}
   format.btitle
   "title" output.check
   new.block
-  bbl.mthesis format.thesis.type output.nonnull
+  "\bisofirstcap{\bisomathesis}" format.thesis.type output.nonnull
   school "school" bibinfo.warn output
   address "address" bibinfo.check output
   format.date "year" output.check
@@ -1250,6 +1350,9 @@ FUNCTION {misc}
   format.authors output
   title howpublished new.block.checkb
   format.title output
+  new.block
+  organization output
+  new.block
   howpublished new.block.checka
   format.howpublished output %bibinfo.check output
   format.date output
@@ -1373,6 +1476,7 @@ FUNCTION {longest.label.pass}
     'skip$
   if$
 }
+
 EXECUTE {initialize.longest.label}
 ITERATE {longest.label.pass}
 FUNCTION {begin.bib}
@@ -1394,6 +1498,9 @@ FUNCTION {begin.bib}
   write$ newline$
 }
 EXECUTE {begin.bib}
+
+EXECUTE {define.macros}
+
 EXECUTE {init.state.consts}
 ITERATE {call.type$}
 FUNCTION {end.bib}
