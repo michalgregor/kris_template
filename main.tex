@@ -18,12 +18,19 @@
 \usepackage[english,slovak]{babel}
 
 %-------------------------------------------------------
+%                Potrebné balíčky
+%-------------------------------------------------------
+
+\usepackage{etoc}
+
+%-------------------------------------------------------
 %                Informácie o dokumente
 %-------------------------------------------------------
 
+
 \title{Názov práce}
 \subtitle{Podnázov práce (ak existuje)}
-\author{Titul, meno a priezvisko}
+\author{Jozef Mrkva}
 \keywords{Vložte minimálne 4 kľúčové slová výstižne charakterizujúce spracovanú tému.}
 \keywordsSecLang{Insert the minimum of 4 keywords that accurately characterize your topic.}
 
@@ -62,9 +69,10 @@ Abstrakt obsahuje informáciu o cieľoch práce, jej stručnom obsahu a v záver
 
 % Abstrakt v cudzom jazyku (anglickom, nemeckom, ...)
 \abstractSecLang{Abstract}{
-In this place insert the text of the abstract in English or another foreign language. Sem vložte text abstraktu v angličtine, prípadne v inom cudzom jazyku.
+In this place insert the text of the abstract in English or another foreign language. Sem vložte text abstraktu v angličtine, prípadne v inom cudzom jazyku.
 }
 
+%Dátum odovzdania práce
 \date{Dátum odovzdania práce}
 
 \acknowledgements{
@@ -135,12 +143,21 @@ In this place insert the text of the abstract in English or another foreign lang
 \makeabstract
 
 %  TOC
+\etocdepthtag.toc{mtchapter}
+\etocsettagdepth{mtchapter}{subsection}
+\etocsettagdepth{mtappendix}{none}
 \tableofcontents
 
 % list of figures
+\etocdepthtag.toc{mtfigure}
+\etocsettagdepth{mtfigure}{subsection}
+\etocsettagdepth{mtfigure}{none}
 \iftotalfigures\listoffigures\fi
 
 % list of tables
+\etocdepthtag.toc{mttable}
+\etocsettagdepth{mttable}{subsection}
+\etocsettagdepth{mttable}{none}
 \iftotaltables\listoftables\fi
 
 % list of abbreviations
@@ -194,6 +211,12 @@ In this place insert the text of the abstract in English or another foreign lang
 
 \makeAppendixPage
 \appendix
+
+\etoctocstyle{1}{Zoznam príloh}
+\etocdepthtag.toc{mtappendix}
+\etocsettagdepth{mtchapter}{none}
+\etocsettagdepth{mtappendix}{subsection}
+\tableofcontents
 
 \include{priloha1}
 
