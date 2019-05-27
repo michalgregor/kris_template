@@ -149,15 +149,9 @@ In this place insert the text of the abstract in English or another foreign lang
 \tableofcontents
 
 % list of figures
-\etocdepthtag.toc{mtfigure}
-\etocsettagdepth{mtfigure}{subsection}
-\etocsettagdepth{mtfigure}{none}
 \iftotalfigures\listoffigures\fi
 
 % list of tables
-\etocdepthtag.toc{mttable}
-\etocsettagdepth{mttable}{subsection}
-\etocsettagdepth{mttable}{none}
 \iftotaltables\listoftables\fi
 
 % list of abbreviations
@@ -208,7 +202,7 @@ In this place insert the text of the abstract in English or another foreign lang
 %-------------------------------------------------------
 %						Appendix
 %-------------------------------------------------------
-
+\captionsetup{list=no}
 \makeAppendixPage
 \appendix
 
