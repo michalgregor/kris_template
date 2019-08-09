@@ -184,6 +184,33 @@ V prípade, že je potrebné vložiť obzvlášť veľký a široký obrázok (k
 \end{sidewaysfigure}
 \end{inlinecode}
 
+Výsledok vidno na \figurename~\ref{fig:wide_figure}. Pre tabuľky existuje obdobné prostredie \texttt{sidewaystable}.
+
+
+\subsection{Zachovanie polohy obrázku}
+
+Niekedy je potrebné zabezpečiť aby sa obrázok v texte zobrazil na predom určenom mieste, napr. medzi dvoma časťami práce, ktoré s ním súvisia. Niektoré možnosti polohovania obrázka sú napr.: na mieste kde sa nachádza v zdrojovom kóde \texttt{[h]}, na vrchnej \texttt{[t]} alebo na spodnej \texttt{[b]} časti strany. 
+
+Toto je text, ktorý súvisí s \figurename~\ref{fig:obrazok2} nižšie.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5cm]{logo}
+\caption{Logo elektrotechnickej fakulty.}
+\label{fig:obrazok2}
+\end{figure}
+
+Toto je text, ktorý súvisí s \figurename~\ref{fig:obrazok2} vyššie. Umiestnenie obrázka bolo dosiahnuté pomocou:
+
+\begin{inlinecode}{latex}
+\begin{figure}[h]
+\centering
+\includegraphics[width=5cm]{logo}
+\caption{Logo elektrotechnickej fakulty.}
+\label{fig:obrazok2}
+\end{figure}
+\end{inlinecode}
+
 \begin{sidewaysfigure}[p]
 \centering
 \includegraphics[width=23cm]{wide_figure}
@@ -191,7 +218,6 @@ V prípade, že je potrebné vložiť obzvlášť veľký a široký obrázok (k
 \label{fig:wide_figure}
 \end{sidewaysfigure}
 
-Výsledok vidno na \figurename~\ref{fig:wide_figure}. Pre tabuľky existuje obdobné prostredie \texttt{sidewaystable}.
 
 \section{Tabuľky}
 

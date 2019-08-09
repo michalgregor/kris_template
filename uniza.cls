@@ -167,7 +167,7 @@
 \newcommand{\facultyshort}[1]{\def\FacultyShort{#1}}
 \newcommand{\department}[1]{\def\Department{#1}}
 \newcommand{\supervisorinst}[1]{\def\SupervisorInst{#1}}
-\supervisorinst{\University, \Faculty\par\Department}
+\supervisorinst{\University,\newline\Faculty, \newline\Department}
 
 \newcommand{\submissionyear}[1]{\def\SubmissionYear{#1}}
 \newcommand{\location}[1]{\def\Location{#1}}
@@ -716,7 +716,7 @@
 		\vfill
 		
 		\begingroup
-			\large 2017
+			\large \SubmissionYear
 			
 			\Author
 		\endgroup
